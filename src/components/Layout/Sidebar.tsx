@@ -3,7 +3,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { User, MessageSquare, Calendar, Settings, Phone } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 
 const Sidebar = () => {
   const location = useLocation();
@@ -20,6 +20,7 @@ const Sidebar = () => {
     { path: '/', icon: <User className="h-5 w-5" />, label: 'Müşteriler' },
     { path: '/messages', icon: <MessageSquare className="h-5 w-5" />, label: 'Mesajlar' },
     { path: '/orders', icon: <Calendar className="h-5 w-5" />, label: 'Siparişler' },
+    { path: '/whatsapp-connect', icon: <Phone className="h-5 w-5" />, label: 'WhatsApp Bağlantısı' },
   ];
 
   return (
@@ -30,8 +31,8 @@ const Sidebar = () => {
             <MessageSquare className="text-white h-6 w-6" />
           </div>
           <div>
-            <h2 className="font-bold text-lg">WhatsApp CRM</h2>
-            <p className="text-xs text-gray-500">Müşteri Yönetimi</p>
+            <h2 className="font-bold text-lg">EsnafPanel</h2>
+            <p className="text-xs text-gray-500">İşletme Yönetimi</p>
           </div>
         </div>
       </div>
@@ -68,13 +69,14 @@ const Sidebar = () => {
       </nav>
       
       <div className="p-4 border-t mt-auto">
-        <button 
-          className="flex items-center justify-center w-full p-2 bg-whatsapp text-white rounded-md hover:bg-whatsapp-dark transition-colors"
-          onClick={showComingSoon}
-        >
-          <Phone className="h-5 w-5 mr-2" />
-          WhatsApp'a Bağlan
-        </button>
+        <Link to="/whatsapp-connect">
+          <button 
+            className="flex items-center justify-center w-full p-2 bg-whatsapp text-white rounded-md hover:bg-whatsapp-dark transition-colors"
+          >
+            <Phone className="h-5 w-5 mr-2" />
+            WhatsApp'a Bağlan
+          </button>
+        </Link>
       </div>
     </aside>
   );

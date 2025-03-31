@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { MessageSquare, Phone, User, Calendar, Settings } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 
 const Navbar = () => {
   const { toast } = useToast();
@@ -21,7 +21,7 @@ const Navbar = () => {
           <div className="w-8 h-8 bg-whatsapp rounded-md flex items-center justify-center">
             <MessageSquare className="text-white h-5 w-5" />
           </div>
-          <h1 className="text-xl font-semibold">WhatsApp CRM</h1>
+          <h1 className="text-xl font-semibold">EsnafPanel</h1>
         </div>
         
         <div className="hidden md:flex items-center space-x-6">
@@ -36,6 +36,10 @@ const Navbar = () => {
           <Link to="/orders" className="flex items-center space-x-1 text-gray-600 hover:text-primary">
             <Calendar className="h-4 w-4" />
             <span>Siparişler</span>
+          </Link>
+          <Link to="/whatsapp-connect" className="flex items-center space-x-1 text-gray-600 hover:text-primary">
+            <Phone className="h-4 w-4" />
+            <span>WhatsApp</span>
           </Link>
           <button onClick={showComingSoon} className="flex items-center space-x-1 text-gray-600 hover:text-primary">
             <Settings className="h-4 w-4" />
