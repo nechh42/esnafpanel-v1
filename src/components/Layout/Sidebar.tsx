@@ -3,36 +3,35 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { User, MessageSquare, Calendar, Settings, Phone } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useToast } from '@/hooks/use-toast';
 
 const Sidebar = () => {
   const location = useLocation();
-  const { toast } = useToast();
-  
-  const showComingSoon = () => {
-    toast({
-      title: "Yakında Geliyor",
-      description: "Bu özellik yakında eklenecektir.",
-    });
-  };
   
   const navItems = [
     { path: '/', icon: <User className="h-5 w-5" />, label: 'Müşteriler' },
     { path: '/messages', icon: <MessageSquare className="h-5 w-5" />, label: 'Mesajlar' },
     { path: '/orders', icon: <Calendar className="h-5 w-5" />, label: 'Siparişler' },
     { path: '/whatsapp-connect', icon: <Phone className="h-5 w-5" />, label: 'WhatsApp Bağlantısı' },
+    { path: '/settings', icon: <Settings className="h-5 w-5" />, label: 'Ayarlar' },
   ];
+
+  // Get the businessSetup from localStorage
+  const businessSetupStr = localStorage.getItem('businessSetup');
+  const businessSetup = businessSetupStr ? JSON.parse(businessSetupStr) : null;
+  const isPremium = businessSetup?.subscriptionPlan === 'premium';
 
   return (
     <aside className="hidden md:flex flex-col w-64 bg-white border-r h-screen sticky top-0">
       <div className="p-4 border-b">
         <div className="flex items-center space-x-2">
-          <div className="w-10 h-10 bg-whatsapp rounded-lg flex items-center justify-center">
-            <MessageSquare className="text-white h-6 w-6" />
-          </div>
+          <img src="/logo.svg" alt="EsnafPanel Logo" className="w-10 h-10" />
           <div>
             <h2 className="font-bold text-lg">EsnafPanel</h2>
-            <p className="text-xs text-gray-500">İşletme Yönetimi</p>
+            <div className="flex items-center mt-1">
+              <span className={`text-xs px-2 py-0.5 rounded-full ${isPremium ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                {isPremium ? 'Gerçek Mod' : 'Demo Mod'}
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -55,16 +54,6 @@ const Sidebar = () => {
               </Link>
             </li>
           ))}
-          
-          <li>
-            <button
-              onClick={showComingSoon}
-              className="w-full flex items-center space-x-3 p-3 rounded-md transition-colors text-gray-700 hover:bg-gray-100"
-            >
-              <Settings className="h-5 w-5" />
-              <span>Ayarlar</span>
-            </button>
-          </li>
         </ul>
       </nav>
       

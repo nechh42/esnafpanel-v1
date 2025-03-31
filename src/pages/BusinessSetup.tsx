@@ -14,7 +14,8 @@ import {
   FormField, 
   FormItem, 
   FormLabel, 
-  FormMessage 
+  FormMessage,
+  FormDescription 
 } from '@/components/ui/form';
 import { 
   Select, 
@@ -25,11 +26,15 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Store, ShoppingBag, Scissors, Coffee, Shirt, Gift, Utensils, BookOpen } from 'lucide-react';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Store, ShoppingBag, Scissors, Coffee, Shirt, Gift, Utensils, BookOpen, CheckCircle } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { useToast } from '@/components/ui/use-toast';
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
+import { Card, CardContent } from '@/components/ui/card';
 
 // İşletme türleri
 const businessTypes = [
@@ -43,6 +48,24 @@ const businessTypes = [
   { id: 'other', name: 'Diğer', icon: <ShoppingBag /> },
 ];
 
+// Abonelik planları
+const subscriptionPlans = [
+  { 
+    id: 'demo', 
+    name: 'Demo Mod',
+    description: 'Sınırlı özelliklerle, 7 gün ücretsiz deneme',
+    price: 'Ücretsiz',
+    features: ['En fazla 10 müşteri', 'Günlük 50 mesaj', 'Temel raporlar', 'WhatsApp bağlantısı']
+  },
+  { 
+    id: 'premium', 
+    name: 'Gerçek Mod', 
+    description: 'Tüm özelliklere tam erişim',
+    price: 'Aylık 10$',
+    features: ['Sınırsız müşteri', 'Sınırsız mesaj', 'Gelişmiş raporlama', 'Toplu mesaj gönderimi', 'Çoklu kullanıcı', 'Öncelikli destek']
+  }
+];
+
 // Form şeması
 const formSchema = z.object({
   businessName: z.string().min(2, {
@@ -53,6 +76,9 @@ const formSchema = z.object({
   }),
   whatsappNumber: z.string().min(10, {
     message: "Geçerli bir telefon numarası girin",
+  }),
+  subscriptionPlan: z.string({
+    required_error: "Lütfen bir abonelik planı seçin",
   }),
 });
 
@@ -67,6 +93,7 @@ const BusinessSetup = () => {
       businessName: "",
       businessType: "",
       whatsappNumber: "",
+      subscriptionPlan: "",
     },
   });
 
@@ -94,9 +121,12 @@ const BusinessSetup = () => {
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-center pb-2">
+            <div className="flex justify-center mb-4">
+              <img src="/logo.svg" alt="EsnafPanel Logo" className="h-20" />
+            </div>
             WhatsApp CRM Kurulumu
           </DialogTitle>
         </DialogHeader>
@@ -169,8 +199,67 @@ const BusinessSetup = () => {
               )}
             />
             
+            <Separator className="my-4" />
+            
+            <div className="space-y-4">
+              <FormField
+                control={form.control}
+                name="subscriptionPlan"
+                render={({ field }) => (
+                  <FormItem className="space-y-3">
+                    <FormLabel>Abonelik Planı</FormLabel>
+                    <FormDescription>
+                      İhtiyacınıza uygun planı seçin
+                    </FormDescription>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="grid grid-cols-1 md:grid-cols-2 gap-4"
+                      >
+                        {subscriptionPlans.map((plan) => (
+                          <Card 
+                            key={plan.id}
+                            className={`border-2 cursor-pointer hover:bg-slate-50 ${field.value === plan.id ? 'border-primary' : 'border-gray-200'}`}
+                            onClick={() => form.setValue('subscriptionPlan', plan.id)}
+                          >
+                            <CardContent className="pt-6">
+                              <div className="flex justify-between items-start">
+                                <div>
+                                  <RadioGroupItem 
+                                    value={plan.id} 
+                                    id={plan.id} 
+                                    className="sr-only" 
+                                  />
+                                  <Label htmlFor={plan.id} className="text-xl font-bold block mb-1">{plan.name}</Label>
+                                  <p className="text-gray-500 text-sm mb-2">{plan.description}</p>
+                                  <p className="font-bold text-lg text-primary">{plan.price}</p>
+                                </div>
+                                {field.value === plan.id && (
+                                  <CheckCircle className="h-6 w-6 text-primary" />
+                                )}
+                              </div>
+                              <ul className="mt-4 space-y-2">
+                                {plan.features.map((feature, index) => (
+                                  <li key={index} className="flex items-center text-sm">
+                                    <CheckCircle className="h-4 w-4 mr-2 text-primary" />
+                                    {feature}
+                                  </li>
+                                ))}
+                              </ul>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            
             <DialogFooter>
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full bg-whatsapp hover:bg-whatsapp-dark">
                 Kurulumu Tamamla
               </Button>
             </DialogFooter>

@@ -11,27 +11,19 @@ const Navbar = () => {
   const isMobile = useIsMobile();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
-  const showComingSoon = () => {
-    toast({
-      title: "Yakında Geliyor",
-      description: "Bu özellik yakında eklenecektir.",
-    });
-  };
-
   const navItems = [
     { path: '/', icon: <User className="h-4 w-4" />, label: 'Müşteriler' },
     { path: '/messages', icon: <MessageSquare className="h-4 w-4" />, label: 'Mesajlar' },
     { path: '/orders', icon: <Calendar className="h-4 w-4" />, label: 'Siparişler' },
     { path: '/whatsapp-connect', icon: <Phone className="h-4 w-4" />, label: 'WhatsApp' },
+    { path: '/settings', icon: <Settings className="h-4 w-4" />, label: 'Ayarlar' },
   ];
 
   return (
     <nav className="bg-white shadow-sm py-3 px-4 border-b">
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 bg-whatsapp rounded-md flex items-center justify-center">
-            <MessageSquare className="text-white h-5 w-5" />
-          </div>
+          <img src="/logo.svg" alt="EsnafPanel Logo" className="w-8 h-8" />
           <h1 className="text-xl font-semibold">EsnafPanel</h1>
         </div>
         
@@ -46,10 +38,6 @@ const Navbar = () => {
               <span>{item.label}</span>
             </Link>
           ))}
-          <button onClick={showComingSoon} className="flex items-center space-x-1 text-gray-600 hover:text-primary">
-            <Settings className="h-4 w-4" />
-            <span>Ayarlar</span>
-          </button>
         </div>
         
         <div className="md:hidden">
@@ -72,16 +60,6 @@ const Navbar = () => {
                     <span>{item.label}</span>
                   </Link>
                 ))}
-                <button 
-                  onClick={() => {
-                    showComingSoon();
-                    setIsMenuOpen(false);
-                  }} 
-                  className="flex items-center space-x-3 text-gray-600 py-2 hover:text-primary"
-                >
-                  <Settings className="h-4 w-4" />
-                  <span>Ayarlar</span>
-                </button>
               </div>
             </SheetContent>
           </Sheet>
