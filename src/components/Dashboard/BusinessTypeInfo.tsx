@@ -1,0 +1,97 @@
+
+import React from 'react';
+import { 
+  Store, 
+  ShoppingBag, 
+  Scissors, 
+  Coffee, 
+  Shirt, 
+  Gift, 
+  Utensils, 
+  BookOpen 
+} from 'lucide-react';
+
+// İşletme türleri ve özellikleri
+const businessTypeDetails = {
+  retail: {
+    icon: <Store className="h-8 w-8" />,
+    name: 'Perakende Mağaza',
+    description: 'Ürün stoku, müşteri sipariş takibi ve satış raporları.',
+    fields: ['Ürün Kataloğu', 'Stok Durumu', 'Fiyat Listesi']
+  },
+  beauty: {
+    icon: <Scissors className="h-8 w-8" />,
+    name: 'Güzellik / Kuaför',
+    description: 'Randevu takibi, müşteri tercihleri ve sadakat programı.',
+    fields: ['Randevular', 'Müşteri Tercihleri', 'Hizmet Listesi']
+  },
+  cafe: {
+    icon: <Coffee className="h-8 w-8" />,
+    name: 'Kafe / Restoran',
+    description: 'Masa rezervasyonları, menü ve özel siparişler.',
+    fields: ['Menü', 'Rezervasyonlar', 'Paket Servis']
+  },
+  clothing: {
+    icon: <Shirt className="h-8 w-8" />,
+    name: 'Giyim Mağazası',
+    description: 'Beden, renk, koleksiyon ve stok takibi.',
+    fields: ['Koleksiyonlar', 'Beden/Renk', 'Kampanyalar']
+  },
+  gift: {
+    icon: <Gift className="h-8 w-8" />,
+    name: 'Hediyelik Eşya',
+    description: 'Özel gün hatırlatmaları, kişiselleştirme seçenekleri.',
+    fields: ['Özel Gün Takibi', 'Kişiselleştirme', 'Hediye Paketleri']
+  },
+  food: {
+    icon: <Utensils className="h-8 w-8" />,
+    name: 'Gıda Satışı',
+    description: 'Ürün tazeliği, paketleme ve teslimat seçenekleri.',
+    fields: ['Ürün Kataloğu', 'Teslimat Seçenekleri', 'Özel Siparişler']
+  },
+  education: {
+    icon: <BookOpen className="h-8 w-8" />,
+    name: 'Eğitim / Kurs',
+    description: 'Kurs programları, öğrenci takibi ve ödeme planları.',
+    fields: ['Kurs Programı', 'Öğrenci Kayıtları', 'Eğitim Materyalleri']
+  },
+  other: {
+    icon: <ShoppingBag className="h-8 w-8" />,
+    name: 'Diğer',
+    description: 'Genel müşteri takibi ve sipariş yönetimi.',
+    fields: ['Müşteri Bilgileri', 'Siparişler', 'Ödemeler']
+  },
+};
+
+interface BusinessTypeInfoProps {
+  businessType: string;
+}
+
+const BusinessTypeInfo: React.FC<BusinessTypeInfoProps> = ({ businessType }) => {
+  // Eğer işletme türü belirlenmemişse veya geçersizse "other" olarak varsay
+  const type = businessType && businessTypeDetails[businessType as keyof typeof businessTypeDetails] 
+    ? businessType as keyof typeof businessTypeDetails
+    : 'other';
+    
+  const details = businessTypeDetails[type];
+
+  return (
+    <div className="rounded-lg border p-4 shadow-sm bg-card">
+      <div className="flex items-center gap-3 mb-2">
+        {details.icon}
+        <h3 className="text-lg font-medium">{details.name}</h3>
+      </div>
+      <p className="text-muted-foreground text-sm mb-3">{details.description}</p>
+      <div className="space-y-1.5">
+        <h4 className="text-sm font-medium">Özelleştirilmiş Alanlar:</h4>
+        <ul className="text-sm pl-5 list-disc">
+          {details.fields.map((field, index) => (
+            <li key={index}>{field}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+};
+
+export default BusinessTypeInfo;

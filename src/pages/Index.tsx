@@ -1,9 +1,10 @@
-
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import MainLayout from '@/components/Layout/MainLayout';
 import StatsCard from '@/components/Dashboard/StatsCard';
 import RecentActivitiesList from '@/components/Dashboard/RecentActivitiesList';
 import CustomerList from '@/components/Customers/CustomerList';
+import BusinessTypeInfo from '@/components/Dashboard/BusinessTypeInfo';
 import { User, MessageSquare, Calendar, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
@@ -91,8 +92,26 @@ const recentActivities = [
   }
 ];
 
+interface BusinessSetup {
+  businessName: string;
+  businessType: string;
+  whatsappNumber: string;
+}
+
 const Index = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const [businessSetup, setBusinessSetup] = useState<BusinessSetup | null>(null);
+  
+  useEffect(() => {
+    const savedSetup = localStorage.getItem('businessSetup');
+    
+    if (savedSetup) {
+      setBusinessSetup(JSON.parse(savedSetup));
+    } else {
+      navigate('/setup');
+    }
+  }, [navigate]);
   
   const handleAddCustomer = () => {
     toast({
@@ -104,9 +123,17 @@ const Index = () => {
   return (
     <MainLayout>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold">Hoş geldiniz 👋</h1>
+        <h1 className="text-2xl font-bold">
+          {businessSetup ? `Hoş geldiniz, ${businessSetup.businessName} 👋` : 'Hoş geldiniz 👋'}
+        </h1>
         <p className="text-gray-600">WhatsApp CRM sisteminizi yönetin.</p>
       </div>
+      
+      {businessSetup && (
+        <div className="mb-6">
+          <BusinessTypeInfo businessType={businessSetup.businessType} />
+        </div>
+      )}
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <StatsCard 
