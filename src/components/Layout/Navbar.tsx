@@ -1,11 +1,15 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { MessageSquare, Phone, User, Calendar, Settings } from 'lucide-react';
+import { MessageSquare, Phone, User, Calendar, Settings, Menu, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
 const Navbar = () => {
   const { toast } = useToast();
+  const isMobile = useIsMobile();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   
   const showComingSoon = () => {
     toast({
@@ -13,6 +17,13 @@ const Navbar = () => {
       description: "Bu özellik yakında eklenecektir.",
     });
   };
+
+  const navItems = [
+    { path: '/', icon: <User className="h-4 w-4" />, label: 'Müşteriler' },
+    { path: '/messages', icon: <MessageSquare className="h-4 w-4" />, label: 'Mesajlar' },
+    { path: '/orders', icon: <Calendar className="h-4 w-4" />, label: 'Siparişler' },
+    { path: '/whatsapp-connect', icon: <Phone className="h-4 w-4" />, label: 'WhatsApp' },
+  ];
 
   return (
     <nav className="bg-white shadow-sm py-3 px-4 border-b">
@@ -25,22 +36,16 @@ const Navbar = () => {
         </div>
         
         <div className="hidden md:flex items-center space-x-6">
-          <Link to="/" className="flex items-center space-x-1 text-gray-600 hover:text-primary">
-            <User className="h-4 w-4" />
-            <span>Müşteriler</span>
-          </Link>
-          <Link to="/messages" className="flex items-center space-x-1 text-gray-600 hover:text-primary">
-            <MessageSquare className="h-4 w-4" />
-            <span>Mesajlar</span>
-          </Link>
-          <Link to="/orders" className="flex items-center space-x-1 text-gray-600 hover:text-primary">
-            <Calendar className="h-4 w-4" />
-            <span>Siparişler</span>
-          </Link>
-          <Link to="/whatsapp-connect" className="flex items-center space-x-1 text-gray-600 hover:text-primary">
-            <Phone className="h-4 w-4" />
-            <span>WhatsApp</span>
-          </Link>
+          {navItems.map((item) => (
+            <Link 
+              key={item.path}
+              to={item.path} 
+              className="flex items-center space-x-1 text-gray-600 hover:text-primary"
+            >
+              {item.icon}
+              <span>{item.label}</span>
+            </Link>
+          ))}
           <button onClick={showComingSoon} className="flex items-center space-x-1 text-gray-600 hover:text-primary">
             <Settings className="h-4 w-4" />
             <span>Ayarlar</span>
@@ -48,11 +53,38 @@ const Navbar = () => {
         </div>
         
         <div className="md:hidden">
-          <button className="text-gray-600 hover:text-primary">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
+          <Sheet>
+            <SheetTrigger asChild>
+              <button className="text-gray-600 hover:text-primary">
+                <Menu className="h-6 w-6" />
+              </button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-[250px] px-0 py-4">
+              <div className="flex flex-col space-y-4 px-6">
+                {navItems.map((item) => (
+                  <Link 
+                    key={item.path}
+                    to={item.path} 
+                    className="flex items-center space-x-3 text-gray-600 py-2 hover:text-primary"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {item.icon}
+                    <span>{item.label}</span>
+                  </Link>
+                ))}
+                <button 
+                  onClick={() => {
+                    showComingSoon();
+                    setIsMenuOpen(false);
+                  }} 
+                  className="flex items-center space-x-3 text-gray-600 py-2 hover:text-primary"
+                >
+                  <Settings className="h-4 w-4" />
+                  <span>Ayarlar</span>
+                </button>
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
     </nav>
