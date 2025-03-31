@@ -8,6 +8,8 @@ import { User, MessageSquare, Calendar, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 
+type ActivityType = 'message' | 'order' | 'customer';
+
 const mockCustomers = [
   { 
     id: '1', 
@@ -54,35 +56,35 @@ const mockCustomers = [
 const recentActivities = [
   {
     id: '1',
-    type: 'message',
+    type: 'message' as ActivityType,
     title: 'Yeni mesaj - Ahmet Yılmaz',
     description: 'Ürün teslimatı hakkında bilgi istiyor.',
     time: '30 dk önce'
   },
   {
     id: '2',
-    type: 'order',
+    type: 'order' as ActivityType,
     title: 'Yeni sipariş - #12345',
     description: 'Ayşe Demir 3 ürün sipariş etti.',
     time: '2 saat önce'
   },
   {
     id: '3',
-    type: 'customer',
+    type: 'customer' as ActivityType,
     title: 'Yeni müşteri - Zeynep Şahin',
     description: 'WhatsApp üzerinden kaydoldu.',
     time: 'Bugün, 09:45'
   },
   {
     id: '4',
-    type: 'message',
+    type: 'message' as ActivityType,
     title: 'Yeni mesaj - Mehmet Kaya',
     description: 'Fiyat listesi hakkında soru soruyor.',
     time: 'Dün, 18:30'
   },
   {
     id: '5',
-    type: 'order',
+    type: 'order' as ActivityType,
     title: 'Sipariş durumu değişti - #12340',
     description: 'Sipariş durumu "Tamamlandı" olarak güncellendi.',
     time: 'Dün, 14:20'
