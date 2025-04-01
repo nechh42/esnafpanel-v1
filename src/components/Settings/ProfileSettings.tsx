@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 type ProfileSettingsProps = {
-  businessData: any;
+  businessData?: any;
 }
 
 const ProfileSettings: React.FC<ProfileSettingsProps> = ({ businessData }) => {

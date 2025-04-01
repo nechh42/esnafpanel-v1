@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -5,10 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import MainLayout from '@/components/Layout/MainLayout';
-import { Globe, CreditCard, Bell, Shield, Languages, BellRing, Phone, User, Building } from 'lucide-react';
+import { Globe, CreditCard, Bell, Shield, Languages, BellRing, Phone, User, Building, Instagram } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import PricingPlans from '@/components/Settings/PricingPlans';
@@ -18,6 +18,7 @@ import SecuritySettings from '@/components/Settings/SecuritySettings';
 import LanguageSettings from '@/components/Settings/LanguageSettings';
 import WhatsAppSettings from '@/components/Settings/WhatsAppSettings';
 import BusinessSettings from '@/components/Settings/BusinessSettings';
+import InstagramSettings from '@/components/Settings/InstagramSettings';
 
 const Settings = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -78,7 +79,7 @@ const Settings = () => {
         <h1 className="text-2xl font-bold mb-6">Ayarlar</h1>
         
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-          <TabsList className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 mb-6">
+          <TabsList className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 mb-6">
             <TabsTrigger value="profile" className="flex items-center gap-2">
               <User className="h-4 w-4" />
               <span className="hidden md:inline">Profil</span>
@@ -106,6 +107,10 @@ const Settings = () => {
             <TabsTrigger value="whatsapp" className="flex items-center gap-2">
               <Phone className="h-4 w-4" />
               <span className="hidden md:inline">WhatsApp</span>
+            </TabsTrigger>
+            <TabsTrigger value="instagram" className="flex items-center gap-2">
+              <Instagram className="h-4 w-4" />
+              <span className="hidden md:inline">Instagram</span>
             </TabsTrigger>
           </TabsList>
           
@@ -135,6 +140,10 @@ const Settings = () => {
           
           <TabsContent value="whatsapp">
             <WhatsAppSettings />
+          </TabsContent>
+
+          <TabsContent value="instagram">
+            <InstagramSettings businessData={businessData} />
           </TabsContent>
         </Tabs>
       </div>
