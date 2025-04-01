@@ -1,69 +1,86 @@
-# Welcome to your Lovable project
 
-## Project info
+# EsnafPanel - WhatsApp Entegrasyonlu Müşteri Takip Sistemi
 
-**URL**: https://lovable.dev/projects/677542fc-733c-4557-b8b4-35262a3428cd
+EsnafPanel, küçük ve orta ölçekli işletmeler için özel olarak tasarlanmış, WhatsApp entegrasyonlu, kolay kullanımlı bir müşteri takip ve sipariş yönetim sistemidir.
 
-## How can I edit this code?
+## Özellikler
 
-There are several ways of editing your application.
+- 🗣️ **WhatsApp Entegrasyonu**: Müşterilerinizle WhatsApp üzerinden doğrudan iletişim kurun
+- 👥 **Müşteri Yönetimi**: Tüm müşteri bilgilerinizi tek bir yerde toplayın
+- 📋 **Sipariş Takibi**: Siparişleri kolayca oluşturun ve durumlarını takip edin
+- 📊 **Raporlama**: İşletmenizin performansını analiz edin
+- 📱 **Mobil Uygulama**: Android ve iOS uyumlu mobil uygulama
+- 🌐 **Çoklu Dil Desteği**: Türkçe, İngilizce, Rusça ve Arapça dil seçenekleri
 
-**Use Lovable**
+## Kullanılan Teknolojiler
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/677542fc-733c-4557-b8b4-35262a3428cd) and start prompting.
+- React
+- TypeScript
+- Tailwind CSS
+- Shadcn/UI
+- Supabase (Backend)
+- Capacitor (Mobil Uygulama)
 
-Changes made via Lovable will be committed automatically to this repo.
+## Kurulum
 
-**Use your preferred IDE**
+### Web Uygulaması
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+```bash
+# Repoyu klonlayın
+git clone https://github.com/your-username/esnafpanel.git
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+# Proje dizinine gidin
+cd esnafpanel
 
-Follow these steps:
+# Bağımlılıkları yükleyin
+npm install
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Geliştirme sunucusunu başlatın
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Mobil Uygulama
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```bash
+# Web uygulamasını build edin
+npm run build
 
-**Use GitHub Codespaces**
+# Capacitor'ı senkronize edin
+npx cap sync
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+# Android için
+npx cap open android
 
-## What technologies are used for this project?
+# iOS için
+npx cap open ios
+```
 
-This project is built with .
+## Abonelik Planları
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+EsnafPanel, işletmelerin ihtiyaçlarına göre farklı abonelik planları sunmaktadır:
 
-## How can I deploy this project?
+### Başlangıç Paketi
+- 1 Kullanıcı Hesabı
+- 300 müşteri kaydı
+- Temel WhatsApp sistemleri
+- Web Arayüzü (Mobil uyumlu)
 
-Simply open [Lovable](https://lovable.dev/projects/677542fc-733c-4557-b8b4-35262a3428cd) and click on Share -> Publish.
+### İşletme Paketi
+- 3 Kullanıcı hesabı
+- 1.000 müşteri kaydı
+- Gelişmiş WhatsApp İndirme (Otomatik yanıtlar)
+- Mobil uygulama
 
-## I want to use a custom domain - is that possible?
+### Premium Paket
+- 5 Kullanıcı hesabı
+- Sınırsız müşteri kaydı
+- Tam WhatsApp entegrasyonu
+- Markalı mobil uygulama
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+## Lisans
+
+Bu proje [MIT](LICENSE) lisansı altında lisanslanmıştır.
+
+## İletişim
+
+Sorularınız veya geri bildirimleriniz için lütfen [info@esnafpanel.com](mailto:info@esnafpanel.com) adresine e-posta gönderin.

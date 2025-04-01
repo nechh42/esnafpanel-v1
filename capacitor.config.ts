@@ -2,7 +2,7 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'app.lovable.677542fc733c4557b8b435262a3428cd',
+  appId: 'app.esnafpanel.mobile',
   appName: 'EsnafPanel',
   webDir: 'dist',
   server: {
@@ -16,6 +16,15 @@ const config: CapacitorConfig = {
       showSpinner: true,
       spinnerColor: "#ffffff"
     }
+  },
+  android: {
+    buildOptions: {
+      keystorePath: "esnafpanel.keystore",
+      keystoreAlias: "esnafpanel",
+    }
+  },
+  ios: {
+    contentInset: "always"
   }
 };
 
