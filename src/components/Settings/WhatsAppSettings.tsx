@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -23,10 +22,10 @@ const WhatsAppSettings = () => {
   });
   
   const [templates, setTemplates] = useState({
-    welcome: 'Merhaba {{customer_name}}, EsnafPanel'e hoşgeldiniz! Size nasıl yardımcı olabiliriz?',
-    outOfHours: 'Merhaba {{customer_name}}, şu anda çalışma saatleri dışındayız. En kısa sürede size dönüş yapacağız.',
-    orderConfirmation: 'Merhaba {{customer_name}}, {{order_id}} numaralı siparişiniz alındı. Toplam tutar: {{total_amount}} TL',
-    followUp: 'Merhaba {{customer_name}}, hizmetimizden memnun kaldınız mı? Geri bildiriminiz bizim için değerli!'
+    welcome: "Merhaba {{customer_name}}, EsnafPanel'e hoşgeldiniz! Size nasıl yardımcı olabiliriz?",
+    outOfHours: "Merhaba {{customer_name}}, şu anda çalışma saatleri dışındayız. En kısa sürede size dönüş yapacağız.",
+    orderConfirmation: "Merhaba {{customer_name}}, {{order_id}} numaralı siparişiniz alındı. Toplam tutar: {{total_amount}} TL",
+    followUp: "Merhaba {{customer_name}}, hizmetimizden memnun kaldınız mı? Geri bildiriminiz bizim için değerli!"
   });
 
   const handleToggle = (key: string) => {
@@ -289,7 +288,7 @@ const WhatsAppSettings = () => {
                       rows={4}
                     />
                     <p className="text-sm text-muted-foreground">
-                      Kullanılabilir değişkenler: {{'{{'}}customer_name{{'}}'}}, {{'{{'}}business_name{{'}}'}}
+                      Kullanılabilir değişkenler: {"{{customer_name}}"}, {"{{business_name}}"}
                     </p>
                   </div>
                 </TabsContent>
@@ -305,7 +304,7 @@ const WhatsAppSettings = () => {
                       rows={4}
                     />
                     <p className="text-sm text-muted-foreground">
-                      Kullanılabilir değişkenler: {{'{{'}}customer_name{{'}}'}}, {{'{{'}}business_name{{'}}'}}, {{'{{'}}working_hours{{'}}'}}
+                      Kullanılabilir değişkenler: {"{{customer_name}}"}, {"{{business_name}}"}, {"{{working_hours}}"}
                     </p>
                   </div>
                 </TabsContent>
@@ -321,7 +320,7 @@ const WhatsAppSettings = () => {
                       rows={4}
                     />
                     <p className="text-sm text-muted-foreground">
-                      Kullanılabilir değişkenler: {{'{{'}}customer_name{{'}}'}}, {{'{{'}}order_id{{'}}'}}, {{'{{'}}total_amount{{'}}'}}, {{'{{'}}order_items{{'}}'}}
+                      Kullanılabilir değişkenler: {"{{customer_name}}"}, {"{{order_id}}"}, {"{{total_amount}}"}, {"{{order_items}}"}
                     </p>
                   </div>
                 </TabsContent>
@@ -337,7 +336,7 @@ const WhatsAppSettings = () => {
                       rows={4}
                     />
                     <p className="text-sm text-muted-foreground">
-                      Kullanılabilir değişkenler: {{'{{'}}customer_name{{'}}'}}, {{'{{'}}order_id{{'}}'}}, {{'{{'}}days_since_purchase{{'}}'}}
+                      Kullanılabilir değişkenler: {"{{customer_name}}"}, {"{{order_id}}"}, {"{{days_since_purchase}}"}
                     </p>
                   </div>
                 </TabsContent>
