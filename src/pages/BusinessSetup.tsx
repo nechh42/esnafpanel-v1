@@ -27,7 +27,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Store, ShoppingBag, Scissors, Coffee, Shirt, Gift, Utensils, BookOpen, CheckCircle } from 'lucide-react';
+import { Store, ShoppingBag, Scissors, Coffee, Shirt, Gift, Utensils, BookOpen, CheckCircle, Palette, BadgeAlert, Medicine, Cake } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -45,6 +45,10 @@ const businessTypes = [
   { id: 'gift', name: 'Hediyelik Eşya', icon: <Gift /> },
   { id: 'food', name: 'Gıda Satışı', icon: <Utensils /> },
   { id: 'education', name: 'Eğitim / Kurs', icon: <BookOpen /> },
+  { id: 'parfumery', name: 'Parfümeri / Kozmetik', icon: <Palette /> },
+  { id: 'barber', name: 'Berber', icon: <Scissors /> },
+  { id: 'pharmacy', name: 'Eczane', icon: <Medicine /> },
+  { id: 'bakery', name: 'Fırın / Pastane', icon: <Cake /> },
   { id: 'other', name: 'Diğer', icon: <ShoppingBag /> },
 ];
 
@@ -52,17 +56,24 @@ const businessTypes = [
 const subscriptionPlans = [
   { 
     id: 'demo', 
-    name: 'Demo Mod',
-    description: 'Sınırlı özelliklerle, 7 gün ücretsiz deneme',
+    name: 'Başlangıç Paketi (Demo)',
+    description: 'Sınırlı özelliklerle 14 gün ücretsiz deneme',
     price: 'Ücretsiz',
-    features: ['En fazla 10 müşteri', 'Günlük 50 mesaj', 'Temel raporlar', 'WhatsApp bağlantısı']
+    features: ['1 Kullanıcı Hesabı', '300 müşteri kaydı', 'Temel WhatsApp sistemleri', 'Günlük 20 Hatırlatma Mesajı', 'Web Arayüzü (Mobil uyumlu)']
+  },
+  { 
+    id: 'business', 
+    name: 'İşletme Paketi', 
+    description: 'Tam özellikli, ideal çözüm',
+    price: 'Aylık 500 ₺',
+    features: ['3 Kullanıcı hesabı', '1.000 müşteri kaydı', 'Gelişmiş WhatsApp özellikleri', 'Sınırsız hatırlatma mesajları', 'Mobil uygulama', 'Öncelikli destek (24 saat)']
   },
   { 
     id: 'premium', 
-    name: 'Gerçek Mod', 
-    description: 'Tüm özelliklere tam erişim',
-    price: 'Aylık 10$',
-    features: ['Sınırsız müşteri', 'Sınırsız mesaj', 'Gelişmiş raporlama', 'Toplu mesaj gönderimi', 'Çoklu kullanıcı', 'Öncelikli destek']
+    name: 'Premium Paket', 
+    description: 'Tüm özelliklere sınırsız erişim',
+    price: 'Aylık 900 ₺',
+    features: ['5 Kullanıcı hesabı', 'Sınırsız müşteri kaydı', 'Tam WhatsApp özellikleri', 'Gelişmiş analitik ve raporlama', 'Markalı mobil uygulama', 'VIP desteği (12 saat yanıt)']
   }
 ];
 
@@ -201,21 +212,25 @@ const BusinessSetup = () => {
             
             <Separator className="my-4" />
             
+            <div className="mb-4">
+              <h3 className="text-lg font-semibold mb-2">Abonelik Planı Seçin</h3>
+              <div className="bg-yellow-50 p-4 rounded-md text-sm mb-4 border border-yellow-200">
+                <p className="font-medium text-yellow-800">🎉 Lansman Özel Kampanyası 🎉</p>
+                <p className="text-yellow-700">İlk 3 ay için tüm paketlerde %25 indirim! 6 aylık alımlarda ek %10 indirim.</p>
+              </div>
+            </div>
+            
             <div className="space-y-4">
               <FormField
                 control={form.control}
                 name="subscriptionPlan"
                 render={({ field }) => (
                   <FormItem className="space-y-3">
-                    <FormLabel>Abonelik Planı</FormLabel>
-                    <FormDescription>
-                      İhtiyacınıza uygun planı seçin
-                    </FormDescription>
                     <FormControl>
                       <RadioGroup
                         onValueChange={field.onChange}
                         defaultValue={field.value}
-                        className="grid grid-cols-1 md:grid-cols-2 gap-4"
+                        className="grid grid-cols-1 gap-4"
                       >
                         {subscriptionPlans.map((plan) => (
                           <Card 
@@ -234,6 +249,12 @@ const BusinessSetup = () => {
                                   <Label htmlFor={plan.id} className="text-xl font-bold block mb-1">{plan.name}</Label>
                                   <p className="text-gray-500 text-sm mb-2">{plan.description}</p>
                                   <p className="font-bold text-lg text-primary">{plan.price}</p>
+                                  {plan.id !== 'demo' && (
+                                    <div className="text-sm text-gray-500 mt-1">
+                                      <p>3 Aylık: {plan.id === 'business' ? '1.350 ₺' : '2.430 ₺'} (%10 indirim)</p>
+                                      <p>6 Aylık: {plan.id === 'business' ? '2.400 ₺' : '4.320 ₺'} (%20 indirim)</p>
+                                    </div>
+                                  )}
                                 </div>
                                 {field.value === plan.id && (
                                   <CheckCircle className="h-6 w-6 text-primary" />

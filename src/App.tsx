@@ -4,7 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Index from "./pages/Index";
 import BusinessSetup from "./pages/BusinessSetup";
 import Messages from "./pages/Messages";
@@ -15,11 +15,21 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+// Uygulama dilini kontrol etmek için basit bir context yapısı oluşturulabilir
+// İleriki bir aşamada tam çok dilli desteği için geliştirilebilir
+
 const App = () => {
-  // Handle device back button for mobile
+  const [isSetupComplete, setIsSetupComplete] = useState(false);
+
+  // İlk yüklenmede kullanıcı kurulumu yapılmış mı kontrol et
+  useEffect(() => {
+    const setupData = localStorage.getItem('businessSetup');
+    setIsSetupComplete(!!setupData);
+  }, []);
+
+  // Mobil cihaz geri tuşu yönetimi
   useEffect(() => {
     const handleBackButton = () => {
-      // Custom back button behavior can be added here
       console.log("Back button pressed");
     };
 

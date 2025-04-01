@@ -1,8 +1,9 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { User, MessageSquare, Calendar, Settings, Phone } from 'lucide-react';
+import { User, MessageSquare, Calendar, Settings, Phone, CreditCard } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 
 const Sidebar = () => {
   const location = useLocation();
@@ -18,7 +19,22 @@ const Sidebar = () => {
   // Get the businessSetup from localStorage
   const businessSetupStr = localStorage.getItem('businessSetup');
   const businessSetup = businessSetupStr ? JSON.parse(businessSetupStr) : null;
-  const isPremium = businessSetup?.subscriptionPlan === 'premium';
+  
+  // Abonelik bilgisine göre hangi metni göstereceğiz
+  let subscriptionText = 'Demo Mod';
+  let subscriptionClass = 'bg-yellow-100 text-yellow-800';
+  
+  if (businessSetup?.subscriptionPlan) {
+    if (businessSetup.subscriptionPlan === 'premium') {
+      subscriptionText = 'Premium Paket';
+      subscriptionClass = 'bg-green-100 text-green-800';
+    } else if (businessSetup.subscriptionPlan === 'business') {
+      subscriptionText = 'İşletme Paketi';
+      subscriptionClass = 'bg-blue-100 text-blue-800';
+    } else {
+      subscriptionText = 'Başlangıç Paketi';
+    }
+  }
 
   return (
     <aside className="hidden md:flex flex-col w-64 bg-white border-r h-screen sticky top-0">
@@ -28,8 +44,8 @@ const Sidebar = () => {
           <div>
             <h2 className="font-bold text-lg">EsnafPanel</h2>
             <div className="flex items-center mt-1">
-              <span className={`text-xs px-2 py-0.5 rounded-full ${isPremium ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
-                {isPremium ? 'Gerçek Mod' : 'Demo Mod'}
+              <span className={`text-xs px-2 py-0.5 rounded-full ${subscriptionClass}`}>
+                {subscriptionText}
               </span>
             </div>
           </div>
@@ -58,13 +74,23 @@ const Sidebar = () => {
       </nav>
       
       <div className="p-4 border-t mt-auto">
+        <Link to="/settings?tab=subscription">
+          <Button 
+            variant="outline"
+            className="flex items-center justify-center w-full p-2 mb-2"
+          >
+            <CreditCard className="h-5 w-5 mr-2" />
+            Abonelik Planları
+          </Button>
+        </Link>
+        
         <Link to="/whatsapp-connect">
-          <button 
+          <Button 
             className="flex items-center justify-center w-full p-2 bg-whatsapp text-white rounded-md hover:bg-whatsapp-dark transition-colors"
           >
             <Phone className="h-5 w-5 mr-2" />
             WhatsApp'a Bağlan
-          </button>
+          </Button>
         </Link>
       </div>
     </aside>
