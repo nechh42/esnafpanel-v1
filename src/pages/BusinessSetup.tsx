@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -27,7 +26,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Store, ShoppingBag, Scissors, Coffee, Shirt, Gift, Utensils, BookOpen, CheckCircle, Palette, BadgeAlert, Medicine, Cake } from 'lucide-react';
+import { Store, ShoppingBag, Scissors, Coffee, Shirt, Gift, Utensils, BookOpen, CheckCircle, Palette, BadgeAlert, Pill, Cake } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -47,7 +46,7 @@ const businessTypes = [
   { id: 'education', name: 'Eğitim / Kurs', icon: <BookOpen /> },
   { id: 'parfumery', name: 'Parfümeri / Kozmetik', icon: <Palette /> },
   { id: 'barber', name: 'Berber', icon: <Scissors /> },
-  { id: 'pharmacy', name: 'Eczane', icon: <Medicine /> },
+  { id: 'pharmacy', name: 'Eczane', icon: <Pill /> },
   { id: 'bakery', name: 'Fırın / Pastane', icon: <Cake /> },
   { id: 'other', name: 'Diğer', icon: <ShoppingBag /> },
 ];

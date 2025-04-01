@@ -69,24 +69,22 @@ const Navbar = () => {
         </div>
         
         <div className="md:hidden flex items-center">
-          <Select 
-            value={language} 
-            onValueChange={handleLanguageChange}
-            className="mr-2"
-          >
-            <SelectTrigger className="w-[80px] h-8 text-xs">
-              <div className="flex items-center">
-                <Globe className="mr-1 h-3 w-3" />
-                <SelectValue />
-              </div>
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="tr">Türkçe</SelectItem>
-              <SelectItem value="en">English</SelectItem>
-              <SelectItem value="ru">Русский</SelectItem>
-              <SelectItem value="ar">العربية</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="mr-2">
+            <Select value={language} onValueChange={handleLanguageChange}>
+              <SelectTrigger className="w-[80px] h-8 text-xs">
+                <div className="flex items-center">
+                  <Globe className="mr-1 h-3 w-3" />
+                  <SelectValue />
+                </div>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="tr">Türkçe</SelectItem>
+                <SelectItem value="en">English</SelectItem>
+                <SelectItem value="ru">Русский</SelectItem>
+                <SelectItem value="ar">العربية</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
           <Sheet>
             <SheetTrigger asChild>
