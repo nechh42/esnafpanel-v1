@@ -7,6 +7,7 @@ import { Check, CreditCard, Banknote } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
 // Add the type definition for PricingPlansProps
 type PricingPlansProps = {
@@ -17,12 +18,29 @@ const PricingPlans: React.FC<PricingPlansProps> = ({ businessData }) => {
   const { toast } = useToast();
   const [paymentMethod, setPaymentMethod] = useState<string>("creditCard");
   const [selectedDuration, setSelectedDuration] = useState<string>("monthly");
+  const [selectedPlan, setSelectedPlan] = useState<string>("");
+  const [showPaymentDialog, setShowPaymentDialog] = useState(false);
   
   const handlePlanSelection = (planType: string) => {
+    setSelectedPlan(planType);
+    setShowPaymentDialog(true);
+  };
+
+  const handlePaymentConfirmation = () => {
     toast({
       title: "Ödeme İşlemi",
-      description: `${planType} planı için ${paymentMethod === "creditCard" ? "kredi kartı" : "havale"} ile ödeme işlemi başlatılıyor...`,
+      description: `${selectedPlan} planı için ${paymentMethod === "creditCard" ? "kredi kartı" : "havale"} ile ödeme işlemi başlatılıyor...`,
     });
+    
+    // Normally this would redirect to a payment gateway or process the payment
+    // This is just a simulation for demonstration purposes
+    setTimeout(() => {
+      toast({
+        title: "Ödeme Başarılı",
+        description: "Ödeme işleminiz başarıyla tamamlandı. Teşekkürler!",
+      });
+      setShowPaymentDialog(false);
+    }, 2000);
   };
 
   const getPriceWithDiscount = (basePrice: number, months: number) => {
@@ -280,18 +298,6 @@ const PricingPlans: React.FC<PricingPlansProps> = ({ businessData }) => {
             <Check className="h-4 w-4 mr-2 text-green-500" />
             TL ödemesi
           </li>
-          <li className="flex items-center">
-            <Check className="h-4 w-4 mr-2 text-green-500" />
-            Kredi kartına taksit imkanı (3/6/9 ay)
-          </li>
-          <li className="flex items-center">
-            <Check className="h-4 w-4 mr-2 text-green-500" />
-            Havale/EFT indirimi (%3)
-          </li>
-          <li className="flex items-center">
-            <Check className="h-4 w-4 mr-2 text-green-500" />
-            Abonelik dondurma hakkı (yılda 1 kez, 1 ay)
-          </li>
         </ul>
       </div>
 
@@ -407,6 +413,49 @@ const PricingPlans: React.FC<PricingPlansProps> = ({ businessData }) => {
           </Card>
         </div>
       </div>
+
+      {/* Payment confirmation dialog */}
+      <Dialog open={showPaymentDialog} onOpenChange={setShowPaymentDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Ödeme Onayı</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <p className="mb-4">Seçtiğiniz plan: <strong>{selectedPlan} Paketi</strong></p>
+            <p className="mb-4">
+              Abonelik süresi: <strong>
+                {selectedDuration === "monthly" ? "1 Aylık" : 
+                 selectedDuration === "quarterly" ? "3 Aylık" : "6 Aylık"}
+              </strong>
+            </p>
+            <p className="mb-4">
+              Ödeme yöntemi: <strong>
+                {paymentMethod === "creditCard" ? "Kredi Kartı" : "Banka Havalesi"}
+              </strong>
+            </p>
+            <p className="font-bold text-lg">
+              Toplam tutar: {
+                selectedPlan === "Başlangıç" ? 
+                  (selectedDuration === "monthly" ? "250 ₺" : 
+                   selectedDuration === "quarterly" ? "675 ₺" : "1.200 ₺") :
+                selectedPlan === "İşletme" ?
+                  (selectedDuration === "monthly" ? "500 ₺" : 
+                   selectedDuration === "quarterly" ? "1.350 ₺" : "2.400 ₺") :
+                  (selectedDuration === "monthly" ? "900 ₺" : 
+                   selectedDuration === "quarterly" ? "2.430 ₺" : "4.320 ₺")
+              }
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowPaymentDialog(false)}>
+              İptal
+            </Button>
+            <Button onClick={handlePaymentConfirmation}>
+              Ödemeyi Tamamla
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
