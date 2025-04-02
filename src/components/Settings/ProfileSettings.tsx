@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
+// Modify the type definition to make businessData optional
 type ProfileSettingsProps = {
   businessData?: any;
 }

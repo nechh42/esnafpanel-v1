@@ -6,6 +6,9 @@ const config: CapacitorConfig = {
   appName: 'EsnafPanel',
   webDir: 'dist',
   server: {
+    androidScheme: 'https',
+    // Allow local development with your IP address
+    // Comment out the url line for local development
     url: 'https://677542fc-733c-4557-b8b4-35262a3428cd.lovableproject.com?forceHideBadge=true',
     cleartext: true
   },
