@@ -2,8 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/Layout/MainLayout';
 import ChatList from '@/components/Messages/ChatList';
-import ChatWindow, { Message, ChatContact } from '@/components/Messages/ChatWindow';
+import ChatWindow, { Message } from '@/components/Messages/ChatWindow';
 import { useToast } from '@/components/ui/use-toast';
+import { ChatContact } from '@/components/Messages/ChatListTypes';
 
 // Sample data
 const mockContacts: ChatContact[] = [
@@ -12,18 +13,24 @@ const mockContacts: ChatContact[] = [
     name: "Ahmet Yılmaz",
     phone: "+90 555 123 4567",
     online: true,
+    lastMessage: "Siparişim hakkında bilgi almak istiyorum.",
+    time: "09:30"
   },
   {
     id: "2",
     name: "Ayşe Demir",
     phone: "+90 532 987 6543",
     lastSeen: "Bugün 14:30",
+    lastMessage: "Ürünleriniz hakkında bilgi almak istiyorum.",
+    time: "Dün 15:40"
   },
   {
     id: "3",
     name: "Mehmet Kaya",
     phone: "+90 541 234 5678",
     lastSeen: "Dün 18:45",
+    lastMessage: "Siparişimin durumu nedir?",
+    time: "Pazartesi 11:20"
   }
 ];
 

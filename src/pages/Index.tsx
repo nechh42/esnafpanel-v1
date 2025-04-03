@@ -11,31 +11,34 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import CustomerForm, { CustomerFormData } from '@/components/Customers/CustomerForm';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-
-type ActivityType = 'message' | 'order' | 'customer';
+import { Customer } from '@/components/Customers/Customer';
+import { Activity } from '@/components/Dashboard/Activity';
 
 // Sample data for demonstration
-const sampleCustomers = [
+const sampleCustomers: Customer[] = [
   {
     id: "1",
     name: "Ahmet Yılmaz",
     phone: "+90 555 123 4567",
     email: "ahmet@example.com",
-    lastContact: "2023-07-10"
+    lastContact: "2023-07-10",
+    status: "active"
   },
   {
     id: "2",
     name: "Ayşe Demir",
     phone: "+90 532 987 6543",
     email: "ayse@example.com",
-    lastContact: "2023-07-09"
+    lastContact: "2023-07-09",
+    status: "active"
   },
   {
     id: "3",
     name: "Mehmet Kaya",
     phone: "+90 541 234 5678",
     email: "mehmet@example.com",
-    lastContact: "2023-07-07"
+    lastContact: "2023-07-07",
+    status: "active"
   }
 ];
 
@@ -67,12 +70,13 @@ const Index = () => {
   };
   
   const handleCustomerSubmit = (data: CustomerFormData) => {
-    const newCustomer = {
+    const newCustomer: Customer = {
       id: Math.random().toString(36).substring(2, 10),
       name: data.name,
       phone: data.phone,
       email: data.email || "",
-      lastContact: new Date().toISOString().split('T')[0]
+      lastContact: new Date().toISOString().split('T')[0],
+      status: "active"
     };
     
     setCustomers([newCustomer, ...customers]);
@@ -142,21 +146,21 @@ const Index = () => {
             {
               id: "1",
               type: "message",
-              customerName: "Ahmet Yılmaz",
+              name: "Ahmet Yılmaz",
               description: "WhatsApp mesajı gönderdi",
               time: "10 dakika önce"
             },
             {
               id: "2",
               type: "order",
-              customerName: "Mehmet Kaya",
+              name: "Mehmet Kaya",
               description: "Yeni sipariş oluşturdu",
               time: "2 saat önce"
             },
             {
               id: "3",
               type: "customer",
-              customerName: "Ayşe Demir",
+              name: "Ayşe Demir",
               description: "Müşteri profili güncellendi",
               time: "3 saat önce"
             }

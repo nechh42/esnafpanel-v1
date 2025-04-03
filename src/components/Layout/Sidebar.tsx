@@ -1,12 +1,17 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { User, MessageSquare, Calendar, Settings, Phone, CreditCard } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { useToast } from '@/components/ui/use-toast';
 
 const Sidebar = () => {
   const location = useLocation();
+  const { toast } = useToast();
+  const [isDemoMode, setIsDemoMode] = useState(true);
   
   const navItems = [
     { path: '/', icon: <User className="h-5 w-5" />, label: 'Müşteriler' },
@@ -24,7 +29,7 @@ const Sidebar = () => {
   let subscriptionText = 'Demo Mod';
   let subscriptionClass = 'bg-yellow-100 text-yellow-800';
   
-  if (businessSetup?.subscriptionPlan) {
+  if (businessSetup?.subscriptionPlan && !isDemoMode) {
     if (businessSetup.subscriptionPlan === 'premium') {
       subscriptionText = 'Premium Paket';
       subscriptionClass = 'bg-green-100 text-green-800';
@@ -35,6 +40,35 @@ const Sidebar = () => {
       subscriptionText = 'Başlangıç Paketi';
     }
   }
+
+  const handleDemoModeToggle = (checked: boolean) => {
+    setIsDemoMode(checked);
+    
+    if (checked) {
+      toast({
+        title: "Demo Mod Aktif",
+        description: "Şu anda demo modunda çalışıyorsunuz. Tüm veriler geçicidir ve kaydedilmez.",
+      });
+    } else {
+      toast({
+        title: "Demo Mod Kapalı",
+        description: "Gerçek mod aktif. Verileriniz kaydedilecek ve gerçek müşterilerle çalışabilirsiniz.",
+      });
+    }
+  };
+
+  // Save demo mode state to localStorage
+  useEffect(() => {
+    localStorage.setItem('demoMode', JSON.stringify(isDemoMode));
+  }, [isDemoMode]);
+
+  // Load demo mode state from localStorage
+  useEffect(() => {
+    const savedDemoMode = localStorage.getItem('demoMode');
+    if (savedDemoMode !== null) {
+      setIsDemoMode(JSON.parse(savedDemoMode));
+    }
+  }, []);
 
   return (
     <aside className="hidden md:flex flex-col w-64 bg-white border-r h-screen sticky top-0">
@@ -73,6 +107,17 @@ const Sidebar = () => {
         </ul>
       </nav>
       
+      <div className="p-4 border-t">
+        <div className="flex items-center justify-between mb-4">
+          <Label htmlFor="demo-mode" className="text-sm font-medium">Demo Mod</Label>
+          <Switch
+            id="demo-mode"
+            checked={isDemoMode}
+            onCheckedChange={handleDemoModeToggle}
+          />
+        </div>
+      </div>
+      
       <div className="p-4 border-t mt-auto">
         <Link to="/settings?tab=subscription">
           <Button 
@@ -86,7 +131,7 @@ const Sidebar = () => {
         
         <Link to="/whatsapp-connect">
           <Button 
-            className="flex items-center justify-center w-full p-2 bg-whatsapp text-white rounded-md hover:bg-whatsapp-dark transition-colors"
+            className="flex items-center justify-center w-full p-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
           >
             <Phone className="h-5 w-5 mr-2" />
             WhatsApp'a Bağlan

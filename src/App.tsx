@@ -24,6 +24,7 @@ const queryClient = new QueryClient({
 
 const App = () => {
   const [isSetupComplete, setIsSetupComplete] = useState(false);
+  const [isDemoMode, setIsDemoMode] = useState(true);
 
   // Check if business setup is completed on initial load
   useEffect(() => {
@@ -39,6 +40,28 @@ const App = () => {
     };
     
     localStorage.setItem('contactInfo', JSON.stringify(contactInfo));
+    
+    // Check demo mode
+    const demoModeData = localStorage.getItem('demoMode');
+    if (demoModeData !== null) {
+      setIsDemoMode(JSON.parse(demoModeData));
+    }
+  }, []);
+  
+  // Listen for demo mode changes
+  useEffect(() => {
+    const handleDemoModeChange = () => {
+      const demoModeData = localStorage.getItem('demoMode');
+      if (demoModeData !== null) {
+        setIsDemoMode(JSON.parse(demoModeData));
+      }
+    };
+    
+    window.addEventListener('storage', handleDemoModeChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleDemoModeChange);
+    };
   }, []);
 
   // Mobile back button handling
