@@ -1,9 +1,8 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, CreditCard, Copy } from 'lucide-react';
+import { Check, CreditCard, Copy, Building } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
@@ -447,7 +446,34 @@ const PricingPlans: React.FC<PricingPlansProps> = ({ businessData }) => {
         </div>
       </div>
 
-      {/* Payment confirmation dialog */}
+      <div className="mt-8 bg-gray-50 p-6 rounded-lg">
+        <h3 className="text-lg font-medium mb-4 flex items-center">
+          <Building className="h-5 w-5 mr-2" />
+          İşletme ve İletişim Bilgilerimiz
+        </h3>
+        <div className="grid md:grid-cols-2 gap-6">
+          <div>
+            <h4 className="font-medium mb-2">İşletme Bilgileri</h4>
+            <ul className="space-y-1 text-sm">
+              <li><strong>Firma Adı:</strong> EsnafPanel Ltd. Şti.</li>
+              <li><strong>Vergi Dairesi:</strong> İzmir Konak V.D.</li>
+              <li><strong>Vergi No:</strong> 123456789</li>
+              <li><strong>Şirket Adresi:</strong> Konak Mah. Gazi Bulvarı No:123 Kat:4 35210 İzmir/Türkiye</li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-medium mb-2">İletişim Bilgileri</h4>
+            <ul className="space-y-1 text-sm">
+              <li><strong>Telefon:</strong> +90 232 123 45 67</li>
+              <li><strong>Müşteri Hizmetleri:</strong> +90 850 123 45 67</li>
+              <li><strong>E-posta:</strong> info@esnafpanel.com</li>
+              <li><strong>Destek:</strong> destek@esnafpanel.com</li>
+              <li><strong>Web:</strong> www.esnafpanel.com</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
       <Dialog open={showPaymentDialog} onOpenChange={setShowPaymentDialog}>
         <DialogContent className="max-w-md">
           <DialogHeader>
@@ -533,7 +559,6 @@ const PricingPlans: React.FC<PricingPlansProps> = ({ businessData }) => {
         </DialogContent>
       </Dialog>
       
-      {/* Success dialog */}
       <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
         <DialogContent className="max-w-md">
           <DialogHeader>
@@ -552,10 +577,15 @@ const PricingPlans: React.FC<PricingPlansProps> = ({ businessData }) => {
               Ödeme detayları ve faturanız kayıtlı e-posta adresinize gönderilecektir.
             </p>
             <div className="mt-4 border p-4 rounded-lg bg-blue-50">
-              <h4 className="font-medium mb-2">Firma Bilgileri</h4>
-              <p className="text-sm mb-1">EsnafPanel Ltd. Şti.</p>
-              <p className="text-sm mb-1">E-posta: esnafpanel@gmail.com</p>
-              <p className="text-sm mb-1">Adres: İzmir, Türkiye</p>
+              <h4 className="font-medium mb-2">İşletme Bilgileri</h4>
+              <p className="text-sm mb-1"><strong>Firma Adı:</strong> EsnafPanel Ltd. Şti.</p>
+              <p className="text-sm mb-1"><strong>Vergi No:</strong> 123456789</p>
+              <p className="text-sm mb-1"><strong>E-posta:</strong> info@esnafpanel.com</p>
+              <p className="text-sm mb-1"><strong>Telefon:</strong> +90 232 123 45 67</p>
+              <p className="text-sm mb-1"><strong>Adres:</strong> Konak Mah. Gazi Bulvarı No:123 Kat:4 35210 İzmir/Türkiye</p>
+              <div className="mt-2 text-sm text-blue-600">
+                <p>Ödemeleriniz güvenli bir şekilde işlenmekte ve EsnafPanel Ltd. Şti. hesabına aktarılmaktadır.</p>
+              </div>
             </div>
           </div>
           <DialogFooter>
