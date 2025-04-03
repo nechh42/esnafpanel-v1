@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -449,26 +450,25 @@ const PricingPlans: React.FC<PricingPlansProps> = ({ businessData }) => {
       <div className="mt-8 bg-gray-50 p-6 rounded-lg">
         <h3 className="text-lg font-medium mb-4 flex items-center">
           <Building className="h-5 w-5 mr-2" />
-          İşletme ve İletişim Bilgilerimiz
+          İletişim Bilgileri
         </h3>
         <div className="grid md:grid-cols-2 gap-6">
           <div>
-            <h4 className="font-medium mb-2">İşletme Bilgileri</h4>
+            <h4 className="font-medium mb-2">Yayıncı ve Geliştirici Bilgileri</h4>
             <ul className="space-y-1 text-sm">
-              <li><strong>Firma Adı:</strong> EsnafPanel Ltd. Şti.</li>
-              <li><strong>Vergi Dairesi:</strong> İzmir Konak V.D.</li>
-              <li><strong>Vergi No:</strong> 123456789</li>
-              <li><strong>Şirket Adresi:</strong> Konak Mah. Gazi Bulvarı No:123 Kat:4 35210 İzmir/Türkiye</li>
+              <li><strong>Geliştirici:</strong> Bireysel Yazılım Geliştiricisi</li>
+              <li><strong>E-posta:</strong> esnafpanel@gmail.com</li>
+              <li><strong>Telefon:</strong> +90 555 123 4567</li>
+              <li><strong>Web:</strong> www.esnafpanel.com</li>
             </ul>
           </div>
           <div>
-            <h4 className="font-medium mb-2">İletişim Bilgileri</h4>
+            <h4 className="font-medium mb-2">Destek</h4>
             <ul className="space-y-1 text-sm">
-              <li><strong>Telefon:</strong> +90 232 123 45 67</li>
-              <li><strong>Müşteri Hizmetleri:</strong> +90 850 123 45 67</li>
-              <li><strong>E-posta:</strong> info@esnafpanel.com</li>
-              <li><strong>Destek:</strong> destek@esnafpanel.com</li>
-              <li><strong>Web:</strong> www.esnafpanel.com</li>
+              <li><strong>Destek E-posta:</strong> destek@esnafpanel.com</li>
+              <li><strong>Telefon:</strong> +90 555 123 4567</li>
+              <li><strong>Destek Saatleri:</strong> 09:00 - 18:00 (Pazartesi-Cuma)</li>
+              <li><strong>Gizlilik Politikası:</strong> www.esnafpanel.com/gizlilik</li>
             </ul>
           </div>
         </div>
@@ -577,14 +577,12 @@ const PricingPlans: React.FC<PricingPlansProps> = ({ businessData }) => {
               Ödeme detayları ve faturanız kayıtlı e-posta adresinize gönderilecektir.
             </p>
             <div className="mt-4 border p-4 rounded-lg bg-blue-50">
-              <h4 className="font-medium mb-2">İşletme Bilgileri</h4>
-              <p className="text-sm mb-1"><strong>Firma Adı:</strong> EsnafPanel Ltd. Şti.</p>
-              <p className="text-sm mb-1"><strong>Vergi No:</strong> 123456789</p>
-              <p className="text-sm mb-1"><strong>E-posta:</strong> info@esnafpanel.com</p>
-              <p className="text-sm mb-1"><strong>Telefon:</strong> +90 232 123 45 67</p>
-              <p className="text-sm mb-1"><strong>Adres:</strong> Konak Mah. Gazi Bulvarı No:123 Kat:4 35210 İzmir/Türkiye</p>
+              <h4 className="font-medium mb-2">Geliştirici Bilgileri</h4>
+              <p className="text-sm mb-1"><strong>Geliştirici:</strong> Bireysel Yazılım Geliştiricisi</p>
+              <p className="text-sm mb-1"><strong>E-posta:</strong> esnafpanel@gmail.com</p>
+              <p className="text-sm mb-1"><strong>Telefon:</strong> +90 555 123 4567</p>
               <div className="mt-2 text-sm text-blue-600">
-                <p>Ödemeleriniz güvenli bir şekilde işlenmekte ve EsnafPanel Ltd. Şti. hesabına aktarılmaktadır.</p>
+                <p>Ödemeleriniz güvenli bir şekilde işlenmektedir. Teşekkür ederiz!</p>
               </div>
             </div>
           </div>

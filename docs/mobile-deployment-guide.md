@@ -68,40 +68,64 @@ npm run dev -- --host 0.0.0.0
 
 Tarayıcıda `http://localhost:8080/` yerine `http://127.0.0.1:8080/` adresini deneyin.
 
-### 5. Mağazalara Yükleme
+### 5. Google Play Store'a Yükleme için Hazırlık
 
-#### Google Play Store'a Yükleme
+#### Gereksinimler
 
-1. Google Play Developer Console'a kaydolun (25$ tek seferlik ücret)
-2. Yeni bir uygulama oluşturun
-3. Uygulama bilgilerini, açıklamaları ve ekran görüntülerini ekleyin
-4. Android Studio'dan bir imzalı APK veya AAB (Android App Bundle) oluşturun:
+1. Google Play Developer hesabı
+2. Uygulama APK veya AAB dosyası 
+3. Uygulama simgesi (512x512 px)
+4. En az 2 ekran görüntüsü
+5. Açıklama metinleri
+6. Gizlilik politikası
+
+#### İmzalı APK/AAB Oluşturma
+
+1. Android Studio'da:
+   ```bash
+   # Önce web uygulamasını derleyin
+   npm run build
+   
+   # Android projesini güncelleyin
+   npx cap sync android
+   
+   # Android Studio'yu açın
+   npx cap open android
+   ```
+
+2. Android Studio'da:
    - **Build > Generate Signed Bundle / APK**
-   - Keystore oluşturun veya mevcut olanı kullanın
-   - Release sürümünü oluşturun
-5. Oluşturulan AAB dosyasını Play Console'a yükleyin
-6. Uygulama sürümünü ayarlayın ve yayınlayın
+   - Yeni keystore oluşturun veya mevcut olanı kullanın
+   - Keystore bilgilerini girin, şifreyi unutmayın!
+   - AAB (önerilen) seçin
+   - **Release** yapılandırmasını seçin
+   - Finish'e tıklayın
 
-#### Apple App Store'a Yükleme
+3. İmzalanmış AAB dosyası şurada oluşturulur:
+   ```
+   android/app/release/app-release.aab
+   ```
 
-1. Apple Developer Program'a kaydolun (yıllık 99$ ücret)
-2. App Store Connect'de yeni bir uygulama oluşturun
-3. Uygulama bilgilerini, açıklamaları ve ekran görüntülerini ekleyin
-4. Xcode'dan bir Archive oluşturun:
-   - Cihaz seçiminde "Any iOS Device (arm64)" seçin
-   - **Product > Archive** seçeneğini kullanın
-5. Archive penceresinden "Distribute App" seçeneğini kullanın
-6. App Store ve TestFlight'a dağıtım seçeneğini işaretleyin
-7. Sertifikalar ve profiller için Apple ID'nizi kullanın
-8. Yükleme tamamlandıktan sonra App Store Connect'ten gözden geçirme için gönderin
+4. Google Play Console'a bu AAB dosyasını yükleyin.
 
-## QR Kod ile Test Etme
+### 6. Play Store Yükleme Kontrol Listesi
 
-Test kullanıcıları için QR kod oluşturarak uygulamayı doğrudan indirmelerini sağlayabilirsiniz:
+- [ ] Uygulama simgesi (512x512 px PNG)
+- [ ] Öne çıkan görsel (1024x500 px PNG/JPG)  
+- [ ] En az 2 ekran görüntüsü (16:9 oranında)
+- [ ] Kısa açıklama (80 karakter)
+- [ ] Tam açıklama (4000 karaktere kadar)
+- [ ] Sınıflandırma kategorisi seçimi
+- [ ] İçerik derecelendirmesi
+- [ ] İletişim e-postası
+- [ ] Gizlilik politikası URL'si
+- [ ] İmzalı AAB/APK dosyası
 
-1. APK dosyasını bir web sunucusuna yükleyin
-2. QR kod oluşturucu bir hizmet kullanarak indirme bağlantısı için QR kod oluşturun
-3. Bu QR kodu kullanıcılarla paylaşın
+### 7. Son Kontroller ve Gönderim
+
+1. Google Play Console'dan "Internal Testing" bölümünde test edin
+2. Uygulama içi tüm özellikleri kontrol edin
+3. Daha sonra "Release to Production" ile yayınlayın
 
 ## Sorun Giderme
 
@@ -114,3 +138,4 @@ Test kullanıcıları için QR kod oluşturarak uygulamayı doğrudan indirmeler
 - [Capacitor Resmi Dokümantasyonu](https://capacitorjs.com/docs)
 - [Android Developer Guides](https://developer.android.com/guide)
 - [iOS Developer Documentation](https://developer.apple.com/documentation/)
+- [Google Play Console Yardım](https://support.google.com/googleplay/android-developer)

@@ -11,6 +11,7 @@ Bu belge, EsnafPanel uygulamasının Google Play Store ve Apple App Store'a nas�
 2. Signed APK veya Android App Bundle (AAB)
 3. Grafik varlıklar (ikon, öne çıkan görsel, ekran görüntüleri)
 4. Uygulama açıklaması ve metadata
+5. Gizlilik politikası (zorunlu)
 
 ### Adımlar
 
@@ -44,12 +45,13 @@ Bu belge, EsnafPanel uygulamasının Google Play Store ve Apple App Store'a nas�
    - Content rating (İçerik derecelendirmesi): Anket formunu doldurun
    - Pricing & distribution (Fiyatlandırma ve dağıtım): Ülkeleri seçin
    - App releases (Uygulama sürümleri): İmzalı AAB'yi yükleyin
+   - Gizlilik politikası URL'si ekleyin (zorunlu)
 
 4. **Yayınlama**
 
    - "Review release" (Sürümü incele) düğmesine tıklayın
    - İncelemeyi gönderin
-   - Google incelemesi 1-3 gün sürebilir
+   - Google incelemesi genellikle 1-3 gün sürebilir
 
 ## Apple App Store'a Yükleme
 
@@ -59,6 +61,7 @@ Bu belge, EsnafPanel uygulamasının Google Play Store ve Apple App Store'a nas�
 2. MacOS bilgisayar ve Xcode
 3. Grafik varlıklar (ikon, ekran görüntüleri)
 4. Uygulama açıklaması ve metadata
+5. Gizlilik politikası (zorunlu)
 
 ### Adımlar
 
@@ -87,9 +90,9 @@ Bu belge, EsnafPanel uygulamasının Google Play Store ve Apple App Store'a nas�
    - Açıklama, anahtar kelimeler, destek URL'si
    - Ekran görüntüleri (her cihaz türü için)
    - App Icon (1024x1024)
-   - Gizlilik politikası URL'si
+   - Gizlilik politikası URL'si (zorunlu)
 
-4. **TestFlight ile Test Etme (Opsiyonel)**
+4. **TestFlight ile Test Etme (Önerilen)**
 
    - Archive oluşturun (Product > Archive)
    - TestFlight'a yükleyin
@@ -100,16 +103,27 @@ Bu belge, EsnafPanel uygulamasının Google Play Store ve Apple App Store'a nas�
    - Xcode'da archive oluşturun
    - App Store Connect'e yükleyin
    - "Submit for Review" (İnceleme için gönder) seçeneğine tıklayın
-   - Apple incelemesi 1-3 gün sürebilir
+   - Apple incelemesi genellikle 1-3 gün sürebilir
 
 ## Önemli Notlar
 
 - Her iki uygulama mağazası da düzenli güncellemeler ve kullanıcı desteği bekler
-- Gizlilik politikası gereklidir (GDPR, KVKK uyumlu)
+- **Gizlilik politikası zorunludur** (GDPR, KVKK uyumlu)
 - Uygulama açıklaması ve ekran görüntüleri doğru olmalıdır
 - Kapsamlı test yapılmalıdır (farklı cihazlar, sürümler)
 - Sürüm güncellemeleri için versiyonlama stratejisi belirleyin
 - Kullanıcı geri bildirimlerini izleyin ve yanıtlayın
+
+## Play Store Yükleme Kontrol Listesi
+
+- [ ] Keystore dosyası güvenli bir yerde saklanıyor
+- [ ] Uygulama simgesi hazır (512x512)
+- [ ] Öne çıkan görsel hazır (1024x500)
+- [ ] En az 2 ekran görüntüsü her ekran boyutu için hazır
+- [ ] Kısa açıklama (80 karakter) ve tam açıklama (4000 karakter) hazır
+- [ ] Gizlilik politikası URL'si hazır
+- [ ] İçerik derecelendirmesi anketi dolduruldu
+- [ ] İmzalı AAB dosyası oluşturuldu
 
 ## Faydalı Linkler
 
