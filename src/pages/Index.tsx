@@ -9,11 +9,35 @@ import BusinessTypeInfo from '@/components/Dashboard/BusinessTypeInfo';
 import { User, MessageSquare, Calendar, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
+import CustomerForm, { CustomerFormData } from '@/components/Customers/CustomerForm';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 type ActivityType = 'message' | 'order' | 'customer';
 
-// Creating empty arrays instead of mock data
-const recentActivities = [];
+// Sample data for demonstration
+const sampleCustomers = [
+  {
+    id: "1",
+    name: "Ahmet Yılmaz",
+    phone: "+90 555 123 4567",
+    email: "ahmet@example.com",
+    lastContact: "2023-07-10"
+  },
+  {
+    id: "2",
+    name: "Ayşe Demir",
+    phone: "+90 532 987 6543",
+    email: "ayse@example.com",
+    lastContact: "2023-07-09"
+  },
+  {
+    id: "3",
+    name: "Mehmet Kaya",
+    phone: "+90 541 234 5678",
+    email: "mehmet@example.com",
+    lastContact: "2023-07-07"
+  }
+];
 
 interface BusinessSetup {
   businessName: string;
@@ -25,7 +49,8 @@ const Index = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [businessSetup, setBusinessSetup] = useState<BusinessSetup | null>(null);
-  const [customers, setCustomers] = useState([]);
+  const [customers, setCustomers] = useState(sampleCustomers);
+  const [isAddCustomerOpen, setIsAddCustomerOpen] = useState(false);
   
   useEffect(() => {
     const savedSetup = localStorage.getItem('businessSetup');
@@ -38,9 +63,24 @@ const Index = () => {
   }, [navigate]);
   
   const handleAddCustomer = () => {
+    setIsAddCustomerOpen(true);
+  };
+  
+  const handleCustomerSubmit = (data: CustomerFormData) => {
+    const newCustomer = {
+      id: Math.random().toString(36).substring(2, 10),
+      name: data.name,
+      phone: data.phone,
+      email: data.email || "",
+      lastContact: new Date().toISOString().split('T')[0]
+    };
+    
+    setCustomers([newCustomer, ...customers]);
+    setIsAddCustomerOpen(false);
+    
     toast({
-      title: "Yakında Geliyor",
-      description: "Müşteri ekleme özelliği yakında eklenecektir.",
+      title: "Müşteri Eklendi",
+      description: `${data.name} başarıyla müşteri listenize eklendi.`,
     });
   };
 
@@ -62,27 +102,27 @@ const Index = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <StatsCard 
           title="Toplam Müşteri" 
-          value="0" 
+          value={customers.length.toString()}
           icon={<User className="h-5 w-5" />}
-          trend={{ value: 0, isUp: false }}
+          trend={{ value: 10, isUp: true }}
         />
         <StatsCard 
           title="Bugünkü Mesajlar" 
-          value="0" 
+          value="12" 
           icon={<MessageSquare className="h-5 w-5" />}
-          trend={{ value: 0, isUp: false }}
+          trend={{ value: 25, isUp: true }}
         />
         <StatsCard 
           title="Açık Siparişler" 
-          value="0" 
+          value="3" 
           icon={<Calendar className="h-5 w-5" />}
-          trend={{ value: 0, isUp: false }}
+          trend={{ value: 5, isUp: false }}
         />
         <StatsCard 
           title="WhatsApp Aramaları" 
-          value="0" 
+          value="7" 
           icon={<Phone className="h-5 w-5" />}
-          trend={{ value: 0, isUp: false }}
+          trend={{ value: 12, isUp: true }}
         />
       </div>
       
@@ -98,9 +138,41 @@ const Index = () => {
         </div>
         
         <div>
-          <RecentActivitiesList activities={recentActivities} />
+          <RecentActivitiesList activities={[
+            {
+              id: "1",
+              type: "message",
+              customerName: "Ahmet Yılmaz",
+              description: "WhatsApp mesajı gönderdi",
+              time: "10 dakika önce"
+            },
+            {
+              id: "2",
+              type: "order",
+              customerName: "Mehmet Kaya",
+              description: "Yeni sipariş oluşturdu",
+              time: "2 saat önce"
+            },
+            {
+              id: "3",
+              type: "customer",
+              customerName: "Ayşe Demir",
+              description: "Müşteri profili güncellendi",
+              time: "3 saat önce"
+            }
+          ]} />
         </div>
       </div>
+      
+      {/* Add Customer Dialog */}
+      <Dialog open={isAddCustomerOpen} onOpenChange={setIsAddCustomerOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Yeni Müşteri Ekle</DialogTitle>
+          </DialogHeader>
+          <CustomerForm onSubmit={handleCustomerSubmit} onCancel={() => setIsAddCustomerOpen(false)} />
+        </DialogContent>
+      </Dialog>
     </MainLayout>
   );
 };

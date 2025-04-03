@@ -3,14 +3,13 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, CreditCard, Banknote, Copy } from 'lucide-react';
+import { Check, CreditCard, Copy } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 
-// Add the type definition for PricingPlansProps
 type PricingPlansProps = {
   businessData?: any;
 }
@@ -22,7 +21,6 @@ const PricingPlans: React.FC<PricingPlansProps> = ({ businessData }) => {
   const [selectedPlan, setSelectedPlan] = useState<string>("");
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
-  const [paymentStep, setPaymentStep] = useState<number>(1);
   
   // Form states for credit card
   const [cardNumber, setCardNumber] = useState<string>("");
@@ -32,7 +30,6 @@ const PricingPlans: React.FC<PricingPlansProps> = ({ businessData }) => {
   
   const handlePlanSelection = (planType: string) => {
     setSelectedPlan(planType);
-    setPaymentStep(1);
     setShowPaymentDialog(true);
   };
 
@@ -71,14 +68,6 @@ const PricingPlans: React.FC<PricingPlansProps> = ({ businessData }) => {
     }, 2000);
   };
   
-  const handleBankTransferCopy = () => {
-    // In a real app, this would copy the IBAN to clipboard
-    toast({
-      title: "Kopyalandı",
-      description: "IBAN bilgisi panoya kopyalandı.",
-    });
-  };
-  
   const closeSuccessDialog = () => {
     setShowSuccessDialog(false);
     toast({
@@ -87,12 +76,6 @@ const PricingPlans: React.FC<PricingPlansProps> = ({ businessData }) => {
     });
   };
 
-  const getPriceWithDiscount = (basePrice: number, months: number) => {
-    if (months === 3) return (basePrice * 3 * 0.9).toFixed(0); // 10% discount
-    if (months === 6) return (basePrice * 6 * 0.8).toFixed(0); // 20% discount
-    return basePrice.toString();
-  };
-  
   const getSelectedPlanPrice = () => {
     if (selectedPlan === "Başlangıç") {
       return selectedDuration === "monthly" ? "250 ₺" : 
@@ -120,13 +103,6 @@ const PricingPlans: React.FC<PricingPlansProps> = ({ businessData }) => {
             <Label htmlFor="creditCard" className="flex items-center cursor-pointer">
               <CreditCard className="h-5 w-5 mr-2" />
               <span>Kredi Kartı</span>
-            </Label>
-          </div>
-          <div className="flex items-center space-x-2 border p-4 rounded-md">
-            <RadioGroupItem value="bankTransfer" id="bankTransfer" />
-            <Label htmlFor="bankTransfer" className="flex items-center cursor-pointer">
-              <Banknote className="h-5 w-5 mr-2" />
-              <span>Banka Havalesi</span>
             </Label>
           </div>
         </RadioGroup>
@@ -488,89 +464,62 @@ const PricingPlans: React.FC<PricingPlansProps> = ({ businessData }) => {
                 </strong>
               </p>
               <p className="mb-2">
-                Ödeme yöntemi: <strong>
-                  {paymentMethod === "creditCard" ? "Kredi Kartı" : "Banka Havalesi"}
-                </strong>
+                Ödeme yöntemi: <strong>Kredi Kartı</strong>
               </p>
               <p className="font-bold">
                 Toplam tutar: <span className="text-lg">{getSelectedPlanPrice()}</span>
               </p>
             </div>
             
-            {paymentMethod === "creditCard" ? (
-              <div className="space-y-4">
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="cardName">Kart Üzerindeki İsim</Label>
+                <Input 
+                  id="cardName" 
+                  placeholder="Ad Soyad" 
+                  value={cardName}
+                  onChange={(e) => setCardName(e.target.value)}
+                />
+              </div>
+              <div>
+                <Label htmlFor="cardNumber">Kart Numarası</Label>
+                <Input 
+                  id="cardNumber" 
+                  placeholder="1234 5678 9012 3456" 
+                  maxLength={16}
+                  value={cardNumber}
+                  onChange={(e) => setCardNumber(e.target.value.replace(/\D/g, '').substring(0, 16))}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="cardName">Kart Üzerindeki İsim</Label>
+                  <Label htmlFor="expiryDate">Son Kullanma Tarihi</Label>
                   <Input 
-                    id="cardName" 
-                    placeholder="Ad Soyad" 
-                    value={cardName}
-                    onChange={(e) => setCardName(e.target.value)}
+                    id="expiryDate" 
+                    placeholder="AA/YY" 
+                    maxLength={5}
+                    value={expiryDate}
+                    onChange={(e) => {
+                      let value = e.target.value.replace(/\D/g, '');
+                      if (value.length > 2) {
+                        value = value.substring(0, 2) + '/' + value.substring(2, 4);
+                      }
+                      setExpiryDate(value);
+                    }}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="cardNumber">Kart Numarası</Label>
+                  <Label htmlFor="cvv">CVV</Label>
                   <Input 
-                    id="cardNumber" 
-                    placeholder="1234 5678 9012 3456" 
-                    maxLength={16}
-                    value={cardNumber}
-                    onChange={(e) => setCardNumber(e.target.value.replace(/\D/g, '').substring(0, 16))}
+                    id="cvv" 
+                    placeholder="123" 
+                    maxLength={3}
+                    value={cvv}
+                    onChange={(e) => setCvv(e.target.value.replace(/\D/g, '').substring(0, 3))}
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="expiryDate">Son Kullanma Tarihi</Label>
-                    <Input 
-                      id="expiryDate" 
-                      placeholder="AA/YY" 
-                      maxLength={5}
-                      value={expiryDate}
-                      onChange={(e) => {
-                        let value = e.target.value.replace(/\D/g, '');
-                        if (value.length > 2) {
-                          value = value.substring(0, 2) + '/' + value.substring(2, 4);
-                        }
-                        setExpiryDate(value);
-                      }}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="cvv">CVV</Label>
-                    <Input 
-                      id="cvv" 
-                      placeholder="123" 
-                      maxLength={3}
-                      value={cvv}
-                      onChange={(e) => setCvv(e.target.value.replace(/\D/g, '').substring(0, 3))}
-                    />
-                  </div>
-                </div>
               </div>
-            ) : (
-              <div className="space-y-4">
-                <div className="bg-blue-50 p-4 rounded-md">
-                  <h4 className="font-medium mb-2">Banka Hesap Bilgileri</h4>
-                  <p className="text-sm mb-1">Banka: <strong>EsnafBank</strong></p>
-                  <p className="text-sm mb-1">Şube Kodu: <strong>1234</strong></p>
-                  <p className="text-sm mb-1">Hesap Sahibi: <strong>EsnafPanel Ltd. Şti.</strong></p>
-                  <div className="flex items-center justify-between mt-2 bg-white p-2 rounded border">
-                    <p className="font-mono">TR12 3456 7890 1234 5678 9012 34</p>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="p-1 h-auto"
-                      onClick={handleBankTransferCopy}
-                    >
-                      <Copy className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  <p className="text-sm mt-3 text-gray-600">
-                    Ödemeyi yaptıktan sonra "Ödemeyi Tamamla" butonuna tıklayın. Referans olarak işletme adınızı belirtmeyi unutmayın.
-                  </p>
-                </div>
-              </div>
-            )}
+            </div>
           </div>
           
           <DialogFooter>
@@ -602,6 +551,12 @@ const PricingPlans: React.FC<PricingPlansProps> = ({ businessData }) => {
             <p className="text-center text-sm text-gray-600 mb-6">
               Ödeme detayları ve faturanız kayıtlı e-posta adresinize gönderilecektir.
             </p>
+            <div className="mt-4 border p-4 rounded-lg bg-blue-50">
+              <h4 className="font-medium mb-2">Firma Bilgileri</h4>
+              <p className="text-sm mb-1">EsnafPanel Ltd. Şti.</p>
+              <p className="text-sm mb-1">E-posta: esnafpanel@gmail.com</p>
+              <p className="text-sm mb-1">Adres: İzmir, Türkiye</p>
+            </div>
           </div>
           <DialogFooter>
             <Button onClick={closeSuccessDialog} className="w-full">

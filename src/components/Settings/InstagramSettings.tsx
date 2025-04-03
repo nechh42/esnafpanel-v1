@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -42,17 +41,12 @@ const InstagramSettings: React.FC<InstagramSettingsProps> = ({ businessData }) =
       return;
     }
     
-    // In a real app, this would initiate the Instagram OAuth flow
-    setInstagramStatus('connecting');
-    
-    // Simulate connection process
-    setTimeout(() => {
-      setInstagramStatus('connected');
-      toast({
-        title: "Instagram Bağlandı",
-        description: `@${instagramUsername} Instagram hesabınız başarıyla bağlandı.`,
-      });
-    }, 3000);
+    // Connect directly without OAuth
+    setInstagramStatus('connected');
+    toast({
+      title: "Instagram Bağlandı",
+      description: `@${instagramUsername} Instagram hesabınız başarıyla bağlandı.`,
+    });
   };
 
   const handleDisconnect = () => {
@@ -110,24 +104,8 @@ const InstagramSettings: React.FC<InstagramSettingsProps> = ({ businessData }) =
                 <ol className="list-decimal list-inside text-sm space-y-2">
                   <li>Instagram işletme hesabı kullanıcı adınızı girin</li>
                   <li>"Bağlan" butonuna tıklayın</li>
-                  <li>Instagram hesabınıza giriş yapın</li>
-                  <li>İzin isteklerini onaylayın</li>
-                  <li>Bağlantı tamamlandığında otomatik olarak yönlendirileceksiniz</li>
+                  <li>Bağlantı sağlandıktan sonra Instagram gönderilerinizi yönetebilirsiniz</li>
                 </ol>
-              </div>
-            </div>
-          ) : instagramStatus === 'connecting' ? (
-            <div className="flex flex-col items-center justify-center py-6">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
-              <h3 className="text-lg font-medium">Instagram'a Bağlanıyor...</h3>
-              <p className="text-sm text-muted-foreground mt-2">Lütfen Instagram giriş sayfasını tamamlayın</p>
-              
-              <div className="w-full max-w-md border border-gray-200 rounded-md mt-6 p-4 flex flex-col items-center">
-                <Instagram className="h-12 w-12 text-[#E1306C] mb-2" />
-                <p className="text-sm">Instagram'a yönlendiriliyorsunuz...</p>
-                <Button variant="outline" onClick={() => setInstagramStatus('disconnected')} className="mt-6">
-                  İptal
-                </Button>
               </div>
             </div>
           ) : (

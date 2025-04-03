@@ -13,21 +13,35 @@ import WhatsAppConnect from "./pages/WhatsAppConnect";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
-const queryClient = new QueryClient();
-
-// Uygulama dilini kontrol etmek için basit bir context yapısı oluşturulabilir
-// İleriki bir aşamada tam çok dilli desteği için geliştirilebilir
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const App = () => {
   const [isSetupComplete, setIsSetupComplete] = useState(false);
 
-  // İlk yüklenmede kullanıcı kurulumu yapılmış mı kontrol et
+  // Check if business setup is completed on initial load
   useEffect(() => {
     const setupData = localStorage.getItem('businessSetup');
     setIsSetupComplete(!!setupData);
+    
+    // Set company contact information
+    const contactInfo = {
+      email: "esnafpanel@gmail.com",
+      address: "İzmir, Türkiye",
+      phone: "+90 555 123 4567",
+      website: "https://esnafpanel.com"
+    };
+    
+    localStorage.setItem('contactInfo', JSON.stringify(contactInfo));
   }, []);
 
-  // Mobil cihaz geri tuşu yönetimi
+  // Mobile back button handling
   useEffect(() => {
     const handleBackButton = () => {
       console.log("Back button pressed");

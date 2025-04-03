@@ -1,77 +1,65 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import MainLayout from '@/components/Layout/MainLayout';
 import OrderList, { Order } from '@/components/Orders/OrderList';
 import { Button } from '@/components/ui/button';
-import { Search } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import OrderForm from '@/components/Orders/OrderForm';
+import { useToast } from '@/hooks/use-toast';
 
-const mockOrders: Order[] = [
+// Sample data
+const sampleOrders: Order[] = [
   {
-    id: 'ORD123456',
-    customerName: 'Ahmet Yılmaz',
-    customerPhone: '+90 555 123 4567',
-    date: '10 Haz 2024',
-    total: '1,250 ₺',
-    status: 'processing'
+    id: "ORD8372",
+    customerName: "Ahmet Yılmaz",
+    customerPhone: "+90 555 123 4567",
+    date: "05.07.2023",
+    total: "350.00 ₺",
+    status: "completed"
   },
   {
-    id: 'ORD123457',
-    customerName: 'Ayşe Demir',
-    customerPhone: '+90 555 987 6543',
-    date: '09 Haz 2024',
-    total: '850 ₺',
-    status: 'completed'
+    id: "ORD6291",
+    customerName: "Ayşe Demir",
+    customerPhone: "+90 532 987 6543",
+    date: "04.07.2023",
+    total: "180.50 ₺",
+    status: "processing"
   },
   {
-    id: 'ORD123458',
-    customerName: 'Mehmet Kaya',
-    customerPhone: '+90 555 456 7890',
-    date: '08 Haz 2024',
-    total: '2,340 ₺',
-    status: 'pending'
-  },
-  {
-    id: 'ORD123459',
-    customerName: 'Zeynep Şahin',
-    customerPhone: '+90 555 234 5678',
-    date: '07 Haz 2024',
-    total: '1,540 ₺',
-    status: 'cancelled'
-  },
-  {
-    id: 'ORD123460',
-    customerName: 'Mustafa Öztürk',
-    customerPhone: '+90 555 345 6789',
-    date: '06 Haz 2024',
-    total: '760 ₺',
-    status: 'completed'
-  },
-  {
-    id: 'ORD123461',
-    customerName: 'Elif Yıldız',
-    customerPhone: '+90 555 678 9012',
-    date: '05 Haz 2024',
-    total: '1,890 ₺',
-    status: 'processing'
-  },
-  {
-    id: 'ORD123462',
-    customerName: 'Can Aydın',
-    customerPhone: '+90 555 901 2345',
-    date: '04 Haz 2024',
-    total: '2,120 ₺',
-    status: 'completed'
+    id: "ORD4510",
+    customerName: "Mehmet Kaya",
+    customerPhone: "+90 541 234 5678",
+    date: "03.07.2023",
+    total: "420.75 ₺",
+    status: "pending"
   }
 ];
 
 const Orders = () => {
   const { toast } = useToast();
-  
+  const [orders, setOrders] = useState<Order[]>(sampleOrders);
+  const [isAddOrderOpen, setIsAddOrderOpen] = useState(false);
+
   const handleAddOrder = () => {
+    setIsAddOrderOpen(true);
+  };
+
+  const handleOrderSubmit = (data: any) => {
+    const newOrder: Order = {
+      id: `ORD${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`,
+      customerName: data.customerName,
+      customerPhone: data.customerPhone,
+      date: new Date().toLocaleDateString('tr-TR'),
+      total: `${data.total} ₺`,
+      status: data.status
+    };
+
+    setOrders([newOrder, ...orders]);
+    setIsAddOrderOpen(false);
+
     toast({
-      title: "Yakında Geliyor",
-      description: "Sipariş ekleme özelliği yakında eklenecektir.",
+      title: "Sipariş Eklendi",
+      description: `${data.customerName} için yeni sipariş oluşturuldu.`,
     });
   };
 
@@ -79,26 +67,38 @@ const Orders = () => {
     <MainLayout>
       <div className="mb-6">
         <h1 className="text-2xl font-bold">Siparişler</h1>
-        <p className="text-gray-600">WhatsApp üzerinden gelen siparişleri yönetin.</p>
+        <p className="text-gray-600">Müşteri siparişlerinizi yönetin.</p>
       </div>
-      
-      <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
-        <div className="relative w-full md:w-auto">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Sipariş ara..."
-            className="pl-10 pr-4 py-2 border rounded-md w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-          />
+
+      <div className="flex justify-between items-center mb-6">
+        <div className="flex items-center gap-4">
+          <div className="bg-green-100 text-green-800 py-1 px-3 rounded-lg text-sm font-medium">
+            Tamamlanan: {orders.filter(order => order.status === 'completed').length}
+          </div>
+          <div className="bg-yellow-100 text-yellow-800 py-1 px-3 rounded-lg text-sm font-medium">
+            Bekleyen: {orders.filter(order => order.status === 'pending').length}
+          </div>
+          <div className="bg-blue-100 text-blue-800 py-1 px-3 rounded-lg text-sm font-medium">
+            İşlemde: {orders.filter(order => order.status === 'processing').length}
+          </div>
         </div>
         
-        <div className="flex space-x-2 w-full md:w-auto">
-          <Button variant="outline" className="flex-1 md:flex-none">Filtrele</Button>
-          <Button onClick={handleAddOrder} className="flex-1 md:flex-none bg-primary">Sipariş Ekle</Button>
-        </div>
+        <Button onClick={handleAddOrder}>
+          Sipariş Ekle
+        </Button>
       </div>
-      
-      <OrderList orders={mockOrders} />
+
+      <OrderList orders={orders} />
+
+      {/* Add Order Dialog */}
+      <Dialog open={isAddOrderOpen} onOpenChange={setIsAddOrderOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Yeni Sipariş Ekle</DialogTitle>
+          </DialogHeader>
+          <OrderForm onSubmit={handleOrderSubmit} onCancel={() => setIsAddOrderOpen(false)} />
+        </DialogContent>
+      </Dialog>
     </MainLayout>
   );
 };

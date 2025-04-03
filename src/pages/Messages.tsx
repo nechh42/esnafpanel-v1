@@ -1,172 +1,162 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/Layout/MainLayout';
-import ChatList, { ChatContact } from '@/components/Messages/ChatList';
-import ChatWindow, { Message } from '@/components/Messages/ChatWindow';
+import ChatList from '@/components/Messages/ChatList';
+import ChatWindow, { Message, ChatContact } from '@/components/Messages/ChatWindow';
+import { useToast } from '@/components/ui/use-toast';
 
+// Sample data
 const mockContacts: ChatContact[] = [
   {
-    id: '1',
-    name: 'Ahmet Yılmaz',
-    lastMessage: 'Merhaba, siparişim ne zaman gelecek?',
-    time: '14:30',
-    unreadCount: 2,
-    online: true
+    id: "1",
+    name: "Ahmet Yılmaz",
+    phone: "+90 555 123 4567",
+    online: true,
   },
   {
-    id: '2',
-    name: 'Ayşe Demir',
-    lastMessage: 'Teşekkürler, iyi günler!',
-    time: 'Dün',
-    online: false
+    id: "2",
+    name: "Ayşe Demir",
+    phone: "+90 532 987 6543",
+    lastSeen: "Bugün 14:30",
   },
   {
-    id: '3',
-    name: 'Mehmet Kaya',
-    lastMessage: 'Fiyat listesini gönderebilir misiniz?',
-    time: 'Dün',
-    unreadCount: 1,
-    online: false
-  },
-  {
-    id: '4',
-    name: 'Zeynep Şahin',
-    lastMessage: 'Tamam, anladım.',
-    time: '07.06',
-    online: true
-  },
-  {
-    id: '5',
-    name: 'Mustafa Öztürk',
-    lastMessage: 'Stokta var mı?',
-    time: '03.06',
-    online: false
+    id: "3",
+    name: "Mehmet Kaya",
+    phone: "+90 541 234 5678",
+    lastSeen: "Dün 18:45",
   }
 ];
 
-const mockContactDetails: Record<string, { phone: string; lastSeen?: string }> = {
-  '1': { phone: '+90 555 123 4567' },
-  '2': { phone: '+90 555 987 6543', lastSeen: 'Bugün, 09:15' },
-  '3': { phone: '+90 555 456 7890', lastSeen: 'Dün, 18:30' },
-  '4': { phone: '+90 555 234 5678' },
-  '5': { phone: '+90 555 345 6789', lastSeen: '03.06, 14:20' }
-};
-
 const mockMessages: Record<string, Message[]> = {
-  '1': [
+  "1": [
     {
-      id: '101',
-      content: 'Merhaba, siparişim ne zaman gelecek?',
-      time: '14:30',
-      sender: 'customer'
+      id: "m1",
+      content: "Merhaba, siparişim hakkında bilgi alabilir miyim?",
+      time: "09:30",
+      sender: "customer",
     },
     {
-      id: '102',
-      content: 'Merhaba Ahmet Bey, siparişiniz yarın kargoya verilecek.',
-      time: '14:35',
-      sender: 'user',
-      status: 'read'
+      id: "m2",
+      content: "Tabii, hangi siparişiniz hakkında bilgi almak istiyorsunuz?",
+      time: "09:32",
+      sender: "user",
+      status: "read",
     },
     {
-      id: '103',
-      content: 'Teşekkür ederim. Kargo takip numarasını da gönderebilir misiniz?',
-      time: '14:40',
-      sender: 'customer'
+      id: "m3",
+      content: "Geçen hafta verdiğim mobilya siparişi. Teslimat tarihi nedir?",
+      time: "09:33",
+      sender: "customer",
+    },
+    {
+      id: "m4",
+      content: "Siparişiniz hazırlanıyor. Tahmini teslimat tarihi önümüzdeki Salı günü.",
+      time: "09:35",
+      sender: "user",
+      status: "read",
     }
   ],
-  '2': [
+  "2": [
     {
-      id: '201',
-      content: 'Ürünleriniz hakkında bilgi almak istiyorum.',
-      time: 'Dün, 08:30',
-      sender: 'customer'
+      id: "m5",
+      content: "İyi günler, ürünleriniz hakkında bilgi almak istiyorum.",
+      time: "Dün 15:40",
+      sender: "customer",
     },
     {
-      id: '202',
-      content: 'Merhaba Ayşe Hanım, hangi ürünlerle ilgileniyorsunuz?',
-      time: 'Dün, 09:00',
-      sender: 'user',
-      status: 'read'
-    },
-    {
-      id: '203',
-      content: 'Teşekkürler, iyi günler!',
-      time: 'Dün, 09:15',
-      sender: 'customer'
+      id: "m6",
+      content: "Merhaba, hangi ürünlerimizle ilgileniyorsunuz?",
+      time: "Dün 15:45",
+      sender: "user",
+      status: "read",
     }
   ],
-  '3': [
+  "3": [
     {
-      id: '301',
-      content: 'Fiyat listesini gönderebilir misiniz?',
-      time: 'Dün, 18:30',
-      sender: 'customer'
-    }
-  ],
-  '4': [
-    {
-      id: '401',
-      content: 'Merhaba, siparişimde değişiklik yapmak istiyorum.',
-      time: '07.06, 10:15',
-      sender: 'customer'
+      id: "m7",
+      content: "Siparişimin durumu nedir?",
+      time: "Pazartesi 11:20",
+      sender: "customer",
     },
     {
-      id: '402',
-      content: 'Merhaba Zeynep Hanım, ne gibi bir değişiklik yapmak istiyorsunuz?',
-      time: '07.06, 10:30',
-      sender: 'user',
-      status: 'read'
+      id: "m8",
+      content: "Siparişiniz kargoya verildi, bugün teslim edilecek.",
+      time: "Pazartesi 11:25",
+      sender: "user",
+      status: "read",
     },
     {
-      id: '403',
-      content: 'Farklı bir renk seçmek istiyorum.',
-      time: '07.06, 10:45',
-      sender: 'customer'
-    },
-    {
-      id: '404',
-      content: 'Tabii, sipariş henüz hazırlanmadı. Hangi rengi tercih edersiniz?',
-      time: '07.06, 11:00',
-      sender: 'user',
-      status: 'read'
-    },
-    {
-      id: '405',
-      content: 'Tamam, anladım.',
-      time: '07.06, 11:15',
-      sender: 'customer'
-    }
-  ],
-  '5': [
-    {
-      id: '501',
-      content: 'Stokta var mı?',
-      time: '03.06, 14:20',
-      sender: 'customer'
+      id: "m9",
+      content: "Teşekkür ederim.",
+      time: "Pazartesi 11:30",
+      sender: "customer",
     }
   ]
 };
 
+const EmptyChatState = () => (
+  <div className="h-full flex flex-col items-center justify-center p-8 text-center">
+    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+      </svg>
+    </div>
+    <h3 className="text-lg font-medium mb-2">Sohbet seçilmedi</h3>
+    <p className="text-gray-500 max-w-sm">
+      Mesajlaşmaya başlamak için soldaki listeden bir müşteri seçin veya yeni bir sohbet başlatın.
+    </p>
+  </div>
+);
+
 const Messages = () => {
-  const [activeContactId, setActiveContactId] = useState<string>('1');
-  
+  const { toast } = useToast();
+  const [contacts, setContacts] = useState<ChatContact[]>(mockContacts);
+  const [messages, setMessages] = useState<Record<string, Message[]>>(mockMessages);
+  const [activeContactId, setActiveContactId] = useState<string | null>(null);
+
   const handleSelectContact = (contactId: string) => {
     setActiveContactId(contactId);
   };
-  
-  const getSelectedContactInfo = () => {
-    const contact = mockContacts.find(c => c.id === activeContactId);
-    const details = mockContactDetails[activeContactId];
-    
-    if (!contact || !details) return null;
-    
-    return {
-      ...contact,
-      ...details
+
+  const handleSendMessage = (contactId: string, content: string) => {
+    // Create a new message
+    const newMessage: Message = {
+      id: `m${Date.now()}`,
+      content,
+      time: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
+      sender: 'user',
+      status: 'sent',
     };
+
+    // Update messages state
+    setMessages(prevMessages => ({
+      ...prevMessages,
+      [contactId]: [...(prevMessages[contactId] || []), newMessage],
+    }));
+
+    // Simulate response after a delay
+    setTimeout(() => {
+      const autoReply: Message = {
+        id: `m${Date.now() + 1}`,
+        content: "Bu otomatik bir yanıttır. Mesajınız alındı. En kısa sürede size dönüş yapacağız.",
+        time: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
+        sender: 'customer',
+      };
+
+      setMessages(prevMessages => ({
+        ...prevMessages,
+        [contactId]: [...(prevMessages[contactId] || []), autoReply],
+      }));
+
+      toast({
+        title: "Yeni Mesaj",
+        description: "Müşteriden yeni bir mesaj alındı.",
+      });
+    }, 3000);
   };
-  
-  const selectedContact = getSelectedContactInfo();
+
+  const selectedContact = activeContactId ? contacts.find(c => c.id === activeContactId) : null;
+  const selectedMessages = activeContactId ? messages[activeContactId] || [] : [];
 
   return (
     <MainLayout>
@@ -177,10 +167,10 @@ const Messages = () => {
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-[calc(100vh-12rem)]">
         <div className="md:col-span-1">
-          <ChatList 
-            contacts={mockContacts} 
-            activeContactId={activeContactId}
-            onSelectContact={handleSelectContact} 
+          <ChatList
+            contacts={contacts}
+            activeContactId={activeContactId || ''}
+            onSelectContact={handleSelectContact}
           />
         </div>
         
@@ -188,12 +178,11 @@ const Messages = () => {
           {selectedContact ? (
             <ChatWindow 
               contact={selectedContact} 
-              messages={mockMessages[activeContactId] || []} 
+              messages={selectedMessages}
+              onSendMessage={handleSendMessage}
             />
           ) : (
-            <div className="flex items-center justify-center h-full bg-white rounded-lg shadow-sm border">
-              <p className="text-gray-500">Lütfen bir sohbet seçin</p>
-            </div>
+            <EmptyChatState />
           )}
         </div>
       </div>

@@ -28,11 +28,11 @@ const WhatsAppSettings = () => {
     followUp: "Merhaba {{customer_name}}, hizmetimizden memnun kaldınız mı? Geri bildiriminiz bizim için değerli!"
   });
 
-  const handleToggle = (key: string) => {
+  const handleToggle = (key) => {
     setSettings(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const handleTemplateChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleTemplateChange = (e) => {
     const { name, value } = e.target;
     setTemplates(prev => ({ ...prev, [name]: value }));
   };
@@ -61,21 +61,15 @@ const WhatsAppSettings = () => {
       return;
     }
     
-    // In a real app, this would initiate the WhatsApp QR code flow
-    setWhatsappStatus('connecting');
-    
-    // Simulate connection process
-    setTimeout(() => {
-      setWhatsappStatus('connected');
-      toast({
-        title: "WhatsApp Bağlandı",
-        description: `${connectedNumber} numaralı WhatsApp hesabınız başarıyla bağlandı.`,
-      });
-    }, 3000);
+    // Connect directly without QR scanning
+    setWhatsappStatus('connected');
+    toast({
+      title: "WhatsApp Bağlandı",
+      description: `${connectedNumber} numaralı WhatsApp hesabınız başarıyla bağlandı.`,
+    });
   };
 
   const handleDisconnect = () => {
-    // In a real app, this would disconnect the WhatsApp connection
     setWhatsappStatus('disconnected');
     toast({
       title: "WhatsApp Bağlantısı Kesildi",
@@ -116,25 +110,9 @@ const WhatsAppSettings = () => {
                 <ol className="list-decimal list-inside text-sm space-y-2">
                   <li>İşletme telefon numaranızı girin</li>
                   <li>"Bağlan" butonuna tıklayın</li>
-                  <li>Telefonunuzdan WhatsApp uygulamasını açın</li>
-                  <li>Ayarlar &gt; Bağlı Cihazlar &gt; Cihaz Bağla seçeneğine gidin</li>
-                  <li>Görüntülenen QR kodu telefonunuzla tarayın</li>
+                  <li>Bağlantı sağlandıktan sonra WhatsApp mesajlarınızı yönetebilirsiniz</li>
                 </ol>
               </div>
-            </div>
-          ) : whatsappStatus === 'connecting' ? (
-            <div className="flex flex-col items-center justify-center py-6">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
-              <h3 className="text-lg font-medium">WhatsApp'a Bağlanıyor...</h3>
-              <p className="text-sm text-muted-foreground mt-2">Lütfen telefonunuzdaki QR kodu tarayın</p>
-              
-              <div className="w-64 h-64 border-2 border-dashed border-gray-300 rounded-md mt-6 flex items-center justify-center">
-                <p className="text-sm text-gray-500">QR Kod Yükleniyor...</p>
-              </div>
-              
-              <Button variant="outline" onClick={() => setWhatsappStatus('disconnected')} className="mt-6">
-                İptal
-              </Button>
             </div>
           ) : (
             <div className="space-y-4">

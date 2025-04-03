@@ -24,19 +24,51 @@ export type ChatContact = {
 interface ChatWindowProps {
   contact: ChatContact;
   messages: Message[];
+  onSendMessage?: (contactId: string, message: string) => void;
 }
 
-const ChatWindow: React.FC<ChatWindowProps> = ({ contact, messages }) => {
+const ChatWindow: React.FC<ChatWindowProps> = ({ contact, messages: initialMessages, onSendMessage }) => {
   const [newMessage, setNewMessage] = useState('');
+  const [messages, setMessages] = useState<Message[]>(initialMessages);
   const { toast } = useToast();
   
   const handleSendMessage = () => {
     if (newMessage.trim() === '') return;
     
+    // Create a new message
+    const message: Message = {
+      id: Math.random().toString(36).substring(2, 10),
+      content: newMessage,
+      time: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
+      sender: 'user',
+      status: 'sent'
+    };
+    
+    // Add to local messages
+    setMessages([...messages, message]);
+    
+    // Notify parent component if callback provided
+    if (onSendMessage) {
+      onSendMessage(contact.id, newMessage);
+    }
+    
     toast({
-      title: "Mesaj Gönderme",
-      description: "Mesaj gönderme yakında eklenecektir.",
+      title: "Mesaj Gönderildi",
+      description: `${contact.name} adlı kişiye mesaj gönderildi.`,
     });
+    
+    // Simulate message being delivered and read
+    setTimeout(() => {
+      setMessages(prev => prev.map(msg => 
+        msg.id === message.id ? { ...msg, status: 'delivered' } : msg
+      ));
+    }, 1000);
+    
+    setTimeout(() => {
+      setMessages(prev => prev.map(msg => 
+        msg.id === message.id ? { ...msg, status: 'read' } : msg
+      ));
+    }, 3000);
     
     setNewMessage('');
   };
@@ -86,7 +118,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ contact, messages }) => {
       </div>
       
       {/* Chat Messages */}
-      <div className="flex-1 overflow-y-auto p-4 whatsapp-chat-bg">
+      <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
         <div className="space-y-3">
           {messages.map((message) => (
             <div
@@ -160,7 +192,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ contact, messages }) => {
           
           <Button
             onClick={handleSendMessage}
-            className="bg-whatsapp hover:bg-whatsapp-dark"
+            className="bg-primary hover:bg-primary/90"
             size="icon"
             disabled={newMessage.trim() === ''}
           >
