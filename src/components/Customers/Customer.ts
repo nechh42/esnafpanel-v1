@@ -5,5 +5,5 @@ export interface Customer {
   phone: string;
   email: string;
   lastContact: string;
-  status?: string;
+  status: 'active' | 'inactive' | 'new';
 }

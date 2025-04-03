@@ -1,17 +1,7 @@
-
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/components/ui/use-toast';
-
-export type ChatContact = {
-  id: string;
-  name: string;
-  lastMessage: string;
-  time: string;
-  unreadCount?: number;
-  avatar?: string;
-  online?: boolean;
-};
+import { ChatContact } from './ChatListTypes';
 
 interface ChatListProps {
   contacts: ChatContact[];

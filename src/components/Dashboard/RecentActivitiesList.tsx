@@ -1,14 +1,7 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-
-type Activity = {
-  id: string;
-  type: 'message' | 'order' | 'customer';
-  title: string;
-  description: string;
-  time: string;
-};
+import { Activity } from './Activity';
 
 interface RecentActivitiesListProps {
   activities: Activity[];
@@ -32,7 +25,7 @@ const RecentActivitiesList: React.FC<RecentActivitiesListProps> = ({ activities,
               )}
             />
             <div className="flex-1">
-              <h3 className="font-medium">{activity.title}</h3>
+              <h3 className="font-medium">{activity.name}</h3>
               <p className="text-sm text-gray-600">{activity.description}</p>
             </div>
             <span className="text-xs text-gray-500">{activity.time}</span>
