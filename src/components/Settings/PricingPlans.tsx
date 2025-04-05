@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, CreditCard, Copy, Building } from 'lucide-react';
+import { Check, CreditCard, Building } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
@@ -334,119 +334,6 @@ const PricingPlans: React.FC<PricingPlansProps> = ({ businessData }) => {
         </ul>
       </div>
 
-      <div className="mt-6 bg-blue-50 p-6 rounded-lg">
-        <h3 className="text-lg font-medium mb-4">Lansman Özel Kampanyası (İlk 3 Ay)</h3>
-        <div className="grid md:grid-cols-2 gap-4">
-          <div className="bg-white p-4 rounded-md">
-            <Badge className="mb-2" variant="secondary">Kampanya</Badge>
-            <h4 className="font-medium">Tüm paketlerde %25 indirim</h4>
-            <p className="text-sm text-gray-600">6 aylık alımlarda ek %10 (toplam %30)</p>
-          </div>
-          <div className="bg-white p-4 rounded-md">
-            <Badge className="mb-2" variant="secondary">Ücretsiz</Badge>
-            <h4 className="font-medium">Kurulum ve veri aktarımı</h4>
-            <p className="text-sm text-gray-600">1 yıllık ücretsiz e-posta desteği</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-6">
-        <h3 className="text-lg font-medium mb-4">Sektörel Paketler (Ek Ücretli)</h3>
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg">Berber/Kuaför Paketi</CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <ul className="list-none space-y-1 text-sm">
-                <li className="flex items-center">
-                  <Check className="h-3 w-3 mr-2 text-green-500" />
-                  Randevu sistemi
-                </li>
-                <li className="flex items-center">
-                  <Check className="h-3 w-3 mr-2 text-green-500" />
-                  Hizmet kaydı
-                </li>
-                <li className="flex items-center">
-                  <Check className="h-3 w-3 mr-2 text-green-500" />
-                  Personel performans yönetimi
-                </li>
-              </ul>
-              <div className="mt-4 text-primary font-bold">Ek Ücret: +100 ₺/ay</div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg">Kafe/Restoran Paketi</CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <ul className="list-none space-y-1 text-sm">
-                <li className="flex items-center">
-                  <Check className="h-3 w-3 mr-2 text-green-500" />
-                  Masa/bölüm yönetimi
-                </li>
-                <li className="flex items-center">
-                  <Check className="h-3 w-3 mr-2 text-green-500" />
-                  Menü yönetimi
-                </li>
-                <li className="flex items-center">
-                  <Check className="h-3 w-3 mr-2 text-green-500" />
-                  Sipariş takibi
-                </li>
-              </ul>
-              <div className="mt-4 text-primary font-bold">Ek Ücret: +150 ₺/ay</div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg">Serbest Çalışan Paketi</CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <ul className="list-none space-y-1 text-sm">
-                <li className="flex items-center">
-                  <Check className="h-3 w-3 mr-2 text-green-500" />
-                  Proje/dosya takibi
-                </li>
-                <li className="flex items-center">
-                  <Check className="h-3 w-3 mr-2 text-green-500" />
-                  Fatura ve tahsilat sistemi
-                </li>
-                <li className="flex items-center">
-                  <Check className="h-3 w-3 mr-2 text-green-500" />
-                  Sözleşme yönetimi
-                </li>
-              </ul>
-              <div className="mt-4 text-primary font-bold">Ek Ücret: +120 ₺/ay</div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg">Kozmetik/Bakım Paketi</CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <ul className="list-none space-y-1 text-sm">
-                <li className="flex items-center">
-                  <Check className="h-3 w-3 mr-2 text-green-500" />
-                  Ürün stok takibi
-                </li>
-                <li className="flex items-center">
-                  <Check className="h-3 w-3 mr-2 text-green-500" />
-                  Müşteri bakım kaydı
-                </li>
-                <li className="flex items-center">
-                  <Check className="h-3 w-3 mr-2 text-green-500" />
-                  Bakım geçmişi
-                </li>
-              </ul>
-              <div className="mt-4 text-primary font-bold">Ek Ücret: +130 ₺/ay</div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
       <div className="mt-8 bg-gray-50 p-6 rounded-lg">
         <h3 className="text-lg font-medium mb-4 flex items-center">
           <Building className="h-5 w-5 mr-2" />
@@ -454,7 +341,7 @@ const PricingPlans: React.FC<PricingPlansProps> = ({ businessData }) => {
         </h3>
         <div className="grid md:grid-cols-2 gap-6">
           <div>
-            <h4 className="font-medium mb-2">Yayıncı ve Geliştirici Bilgileri</h4>
+            <h4 className="font-medium mb-2">Geliştirici Bilgileri</h4>
             <ul className="space-y-1 text-sm">
               <li><strong>Geliştirici:</strong> Bireysel Yazılım Geliştiricisi</li>
               <li><strong>E-posta:</strong> esnafpanel@gmail.com</li>

@@ -26,7 +26,7 @@ const Sidebar = () => {
   const businessSetup = businessSetupStr ? JSON.parse(businessSetupStr) : null;
   
   // Abonelik bilgisine göre hangi metni göstereceğiz
-  let subscriptionText = 'Demo Mod';
+  let subscriptionText = 'Demo Mod (10 Gün)';
   let subscriptionClass = 'bg-yellow-100 text-yellow-800';
   
   if (businessSetup?.subscriptionPlan && !isDemoMode) {
@@ -37,7 +37,7 @@ const Sidebar = () => {
       subscriptionText = 'İşletme Paketi';
       subscriptionClass = 'bg-blue-100 text-blue-800';
     } else {
-      subscriptionText = 'Başlangıç Paketi';
+      subscriptionText = 'Demo (10 Gün)';
     }
   }
 

@@ -129,7 +129,7 @@ Tarayıcıda `http://localhost:8080/` yerine `http://127.0.0.1:8080/` adresini d
 
 ## Sorun Giderme
 
-- **Windows'ta localhost çalışmıyor**: Güvenlik duvarı ayarlarınızı kontrol edin veya `127.0.0.1` adresini deneyin
+- **Web sayfası mevcut değil hatası**: Capacitor yapılandırmasını kontrol edin, `local` modu kullanmayı deneyin
 - **Android Studio'da derleme hataları**: Gradle sürümünü güncelleyin ve SDK'nın güncel olduğundan emin olun
 - **Capacitor senkronizasyon hataları**: Node modüllerini temizleyip yeniden yükleyin: `rm -rf node_modules && npm install`
 

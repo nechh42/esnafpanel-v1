@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -55,10 +56,10 @@ const businessTypes = [
 const subscriptionPlans = [
   { 
     id: 'demo', 
-    name: 'Başlangıç Paketi (Demo)',
-    description: 'Sınırlı özelliklerle 14 gün ücretsiz deneme',
+    name: 'Demo (10 gün)',
+    description: 'Sınırlı özelliklerle 10 gün ücretsiz deneme',
     price: 'Ücretsiz',
-    features: ['1 Kullanıcı Hesabı', '300 müşteri kaydı', 'Temel WhatsApp sistemleri', 'Günlük 20 Hatırlatma Mesajı', 'Web Arayüzü (Mobil uyumlu)']
+    features: ['1 Kullanıcı Hesabı', '50 müşteri kaydı', 'Temel WhatsApp sistemleri', 'Günlük 5 Hatırlatma Mesajı', 'Web Arayüzü (Mobil uyumlu)']
   },
   { 
     id: 'business', 
@@ -213,10 +214,6 @@ const BusinessSetup = () => {
             
             <div className="mb-4">
               <h3 className="text-lg font-semibold mb-2">Abonelik Planı Seçin</h3>
-              <div className="bg-yellow-50 p-4 rounded-md text-sm mb-4 border border-yellow-200">
-                <p className="font-medium text-yellow-800">🎉 Lansman Özel Kampanyası 🎉</p>
-                <p className="text-yellow-700">İlk 3 ay için tüm paketlerde %25 indirim! 6 aylık alımlarda ek %10 indirim.</p>
-              </div>
             </div>
             
             <div className="space-y-4">
@@ -248,12 +245,6 @@ const BusinessSetup = () => {
                                   <Label htmlFor={plan.id} className="text-xl font-bold block mb-1">{plan.name}</Label>
                                   <p className="text-gray-500 text-sm mb-2">{plan.description}</p>
                                   <p className="font-bold text-lg text-primary">{plan.price}</p>
-                                  {plan.id !== 'demo' && (
-                                    <div className="text-sm text-gray-500 mt-1">
-                                      <p>3 Aylık: {plan.id === 'business' ? '1.350 ₺' : '2.430 ₺'} (%10 indirim)</p>
-                                      <p>6 Aylık: {plan.id === 'business' ? '2.400 ₺' : '4.320 ₺'} (%20 indirim)</p>
-                                    </div>
-                                  )}
                                 </div>
                                 {field.value === plan.id && (
                                   <CheckCircle className="h-6 w-6 text-primary" />
