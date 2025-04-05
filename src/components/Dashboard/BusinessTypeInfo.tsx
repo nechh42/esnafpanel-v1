@@ -8,7 +8,11 @@ import {
   Shirt, 
   Gift, 
   Utensils, 
-  BookOpen 
+  BookOpen,
+  Palette,
+  Pill,
+  Cake,
+  BadgeAlert
 } from 'lucide-react';
 
 // İşletme türleri ve özellikleri
@@ -30,6 +34,12 @@ const businessTypeDetails = {
     name: 'Kafe / Restoran',
     description: 'Masa rezervasyonları, menü ve özel siparişler.',
     fields: ['Menü', 'Rezervasyonlar', 'Paket Servis']
+  },
+  restaurant: {
+    icon: <Utensils className="h-8 w-8" />,
+    name: 'Restoran', 
+    description: 'Masa rezervasyonları, menü ve özel siparişler.',
+    fields: ['Menü', 'Rezervasyonlar', 'Sipariş Takibi']
   },
   clothing: {
     icon: <Shirt className="h-8 w-8" />,
@@ -55,12 +65,48 @@ const businessTypeDetails = {
     description: 'Kurs programları, öğrenci takibi ve ödeme planları.',
     fields: ['Kurs Programı', 'Öğrenci Kayıtları', 'Eğitim Materyalleri']
   },
+  parfumery: {
+    icon: <Palette className="h-8 w-8" />,
+    name: 'Parfümeri / Kozmetik',
+    description: 'Ürün çeşitleri, müşteri tercihleri ve stok takibi.',
+    fields: ['Ürün Kataloğu', 'Müşteri Tercihleri', 'Kampanyalar']
+  },
+  pharmacy: {
+    icon: <Pill className="h-8 w-8" />,
+    name: 'Eczane',
+    description: 'İlaç stoku, reçete takibi ve müşteri danışmanlığı.',
+    fields: ['İlaç Stoku', 'Reçete Takibi', 'Sağlık Danışmanlığı']
+  },
+  barber: {
+    icon: <Scissors className="h-8 w-8" />,
+    name: 'Berber',
+    description: 'Randevu takibi, müşteri tercihleri ve hizmet listesi.',
+    fields: ['Randevular', 'Müşteri Tercihleri', 'Hizmet Listesi']
+  },
+  bakery: {
+    icon: <Cake className="h-8 w-8" />,
+    name: 'Fırın / Pastane',
+    description: 'Ürün çeşitleri, özel siparişler ve teslimat hizmeti.',
+    fields: ['Ürün Kataloğu', 'Özel Siparişler', 'Teslimat Hizmetleri']
+  },
   other: {
     icon: <ShoppingBag className="h-8 w-8" />,
     name: 'Diğer',
     description: 'Genel müşteri takibi ve sipariş yönetimi.',
     fields: ['Müşteri Bilgileri', 'Siparişler', 'Ödemeler']
   },
+  service: {
+    icon: <BadgeAlert className="h-8 w-8" />,
+    name: 'Hizmet Sektörü',
+    description: 'Randevu takibi, hizmet listesi ve müşteri yönetimi.',
+    fields: ['Hizmet Listesi', 'Randevular', 'Müşteri Kayıtları']
+  },
+  health: {
+    icon: <Pill className="h-8 w-8" />,
+    name: 'Sağlık Hizmetleri',
+    description: 'Hasta randevuları, tıbbi kayıtlar ve takip.',
+    fields: ['Hasta Kayıtları', 'Randevular', 'Tıbbi Geçmiş']
+  }
 };
 
 interface BusinessTypeInfoProps {
@@ -69,11 +115,15 @@ interface BusinessTypeInfoProps {
 
 const BusinessTypeInfo: React.FC<BusinessTypeInfoProps> = ({ businessType }) => {
   // Eğer işletme türü belirlenmemişse veya geçersizse "other" olarak varsay
-  const type = businessType && businessTypeDetails[businessType as keyof typeof businessTypeDetails] 
-    ? businessType as keyof typeof businessTypeDetails
-    : 'other';
+  const details = React.useMemo(() => {
+    // businessType'in tanımlı bir tür olup olmadığını kontrol et
+    if (!businessType || !Object.prototype.hasOwnProperty.call(businessTypeDetails, businessType)) {
+      console.log(`Geçersiz işletme türü: ${businessType}, varsayılan olarak 'other' kullanılıyor`);
+      return businessTypeDetails.other;
+    }
     
-  const details = businessTypeDetails[type];
+    return businessTypeDetails[businessType as keyof typeof businessTypeDetails];
+  }, [businessType]);
 
   return (
     <div className="rounded-lg border p-4 shadow-sm bg-card">

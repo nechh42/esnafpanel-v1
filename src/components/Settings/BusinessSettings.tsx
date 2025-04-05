@@ -21,6 +21,8 @@ const BusinessSettings: React.FC<BusinessSettingsProps> = ({ businessData }) => 
     city: businessData?.city || '',
     description: businessData?.description || '',
   });
+  
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -32,12 +34,27 @@ const BusinessSettings: React.FC<BusinessSettingsProps> = ({ businessData }) => 
   };
 
   const handleSave = () => {
-    // In a real application, save to Supabase
-    // For now, just show a success toast
-    toast({
-      title: "İşletme güncellendi",
-      description: "İşletme bilgileriniz başarıyla kaydedildi.",
-    });
+    setIsLoading(true);
+    
+    try {
+      // In a real application, save to Supabase
+      // For now, just show a success toast and save to localStorage
+      localStorage.setItem('businessData', JSON.stringify(formData));
+      
+      toast({
+        title: "İşletme güncellendi",
+        description: "İşletme bilgileriniz başarıyla kaydedildi.",
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Hata",
+        description: "İşletme bilgileriniz kaydedilemedi. Lütfen daha sonra tekrar deneyin.",
+      });
+      console.error("İşletme bilgilerini kaydetme hatası:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -64,7 +81,7 @@ const BusinessSettings: React.FC<BusinessSettingsProps> = ({ businessData }) => 
               <div className="space-y-2">
                 <Label htmlFor="businessType">İşletme Türü</Label>
                 <Select 
-                  value={formData.businessType}
+                  value={formData.businessType || 'other'}
                   onValueChange={(value) => handleSelectChange('businessType', value)}
                 >
                   <SelectTrigger id="businessType">
@@ -73,8 +90,17 @@ const BusinessSettings: React.FC<BusinessSettingsProps> = ({ businessData }) => 
                   <SelectContent>
                     <SelectItem value="retail">Perakende Satış</SelectItem>
                     <SelectItem value="restaurant">Restoran/Kafe</SelectItem>
+                    <SelectItem value="cafe">Kafe</SelectItem>
                     <SelectItem value="beauty">Güzellik/Kuaför</SelectItem>
+                    <SelectItem value="barber">Berber</SelectItem>
+                    <SelectItem value="clothing">Giyim Mağazası</SelectItem>
+                    <SelectItem value="gift">Hediyelik Eşya</SelectItem>
+                    <SelectItem value="food">Gıda Satışı</SelectItem>
+                    <SelectItem value="bakery">Fırın/Pastane</SelectItem>
+                    <SelectItem value="parfumery">Parfümeri/Kozmetik</SelectItem>
+                    <SelectItem value="pharmacy">Eczane</SelectItem>
                     <SelectItem value="health">Sağlık Hizmetleri</SelectItem>
+                    <SelectItem value="education">Eğitim/Kurs</SelectItem>
                     <SelectItem value="service">Hizmet Sektörü</SelectItem>
                     <SelectItem value="other">Diğer</SelectItem>
                   </SelectContent>
@@ -117,7 +143,12 @@ const BusinessSettings: React.FC<BusinessSettingsProps> = ({ businessData }) => 
           </div>
         </CardContent>
         <CardFooter className="flex justify-end">
-          <Button onClick={handleSave}>Kaydet</Button>
+          <Button 
+            onClick={handleSave}
+            disabled={isLoading}
+          >
+            {isLoading ? "Kaydediliyor..." : "Kaydet"}
+          </Button>
         </CardFooter>
       </Card>
     </div>
