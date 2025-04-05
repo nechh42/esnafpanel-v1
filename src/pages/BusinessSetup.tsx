@@ -31,25 +31,25 @@ import { Store, ShoppingBag, Scissors, Coffee, Shirt, Gift, Utensils, BookOpen, 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Card, CardContent } from '@/components/ui/card';
 
-// İşletme türleri
+// İşletme türleri - bileşen türlerini düzgün belirterek
 const businessTypes = [
-  { id: 'retail', name: 'Perakende Mağaza', icon: <Store /> },
-  { id: 'beauty', name: 'Güzellik / Kuaför', icon: <Scissors /> },
-  { id: 'cafe', name: 'Kafe / Restoran', icon: <Coffee /> },
-  { id: 'clothing', name: 'Giyim Mağazası', icon: <Shirt /> },
-  { id: 'gift', name: 'Hediyelik Eşya', icon: <Gift /> },
-  { id: 'food', name: 'Gıda Satışı', icon: <Utensils /> },
-  { id: 'education', name: 'Eğitim / Kurs', icon: <BookOpen /> },
-  { id: 'parfumery', name: 'Parfümeri / Kozmetik', icon: <Palette /> },
-  { id: 'barber', name: 'Berber', icon: <Scissors /> },
-  { id: 'pharmacy', name: 'Eczane', icon: <Pill /> },
-  { id: 'bakery', name: 'Fırın / Pastane', icon: <Cake /> },
-  { id: 'other', name: 'Diğer', icon: <ShoppingBag /> },
+  { id: 'retail', name: 'Perakende Mağaza', icon: <Store size={20} /> },
+  { id: 'beauty', name: 'Güzellik / Kuaför', icon: <Scissors size={20} /> },
+  { id: 'cafe', name: 'Kafe / Restoran', icon: <Coffee size={20} /> },
+  { id: 'clothing', name: 'Giyim Mağazası', icon: <Shirt size={20} /> },
+  { id: 'gift', name: 'Hediyelik Eşya', icon: <Gift size={20} /> },
+  { id: 'food', name: 'Gıda Satışı', icon: <Utensils size={20} /> },
+  { id: 'education', name: 'Eğitim / Kurs', icon: <BookOpen size={20} /> },
+  { id: 'parfumery', name: 'Parfümeri / Kozmetik', icon: <Palette size={20} /> },
+  { id: 'barber', name: 'Berber', icon: <Scissors size={20} /> },
+  { id: 'pharmacy', name: 'Eczane', icon: <Pill size={20} /> },
+  { id: 'bakery', name: 'Fırın / Pastane', icon: <Cake size={20} /> },
+  { id: 'other', name: 'Diğer', icon: <ShoppingBag size={20} /> },
 ];
 
 // Abonelik planları
@@ -130,6 +130,11 @@ const BusinessSetup = () => {
     }
   };
 
+  // Tür seçimi için daha güvenli işleyici
+  const handleBusinessTypeSelect = (value: string) => {
+    form.setValue('businessType', value);
+  };
+
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
@@ -178,7 +183,6 @@ const BusinessSetup = () => {
                         <SelectItem 
                           key={type.id} 
                           value={type.id}
-                          className="flex items-center gap-2"
                         >
                           <div className="flex items-center gap-2">
                             {type.icon}
