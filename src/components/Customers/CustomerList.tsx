@@ -42,44 +42,53 @@ const CustomerList: React.FC<CustomerListProps> = ({ customers }) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {customers.map((customer) => (
-            <TableRow key={customer.id}>
-              <TableCell className="font-medium">{customer.name}</TableCell>
-              <TableCell>{customer.phone}</TableCell>
-              <TableCell className="hidden md:table-cell">{customer.email}</TableCell>
-              <TableCell className="hidden md:table-cell">{customer.lastContact}</TableCell>
-              <TableCell className="hidden md:table-cell">
-                <span
-                  className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                    customer.status === 'active'
-                      ? 'bg-green-100 text-green-800'
-                      : customer.status === 'new'
-                      ? 'bg-blue-100 text-blue-800'
-                      : 'bg-gray-100 text-gray-800'
-                  }`}
-                >
-                  {customer.status === 'active'
-                    ? 'Aktif'
-                    : customer.status === 'new'
-                    ? 'Yeni'
-                    : 'Pasif'}
-                </span>
-              </TableCell>
-              <TableCell className="text-right">
-                <div className="flex justify-end space-x-2">
-                  <Button variant="outline" size="icon" onClick={handleAction}>
-                    <MessageSquare className="h-4 w-4" />
-                  </Button>
-                  <Button variant="outline" size="icon" onClick={handleAction}>
-                    <Phone className="h-4 w-4" />
-                  </Button>
-                  <Button variant="outline" size="icon" onClick={handleAction}>
-                    <MoreVertical className="h-4 w-4" />
-                  </Button>
-                </div>
+          {customers.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={6} className="text-center py-10">
+                <p className="text-muted-foreground">Henüz müşteri bulunmuyor.</p>
+                <p className="text-sm">Yeni bir müşteri eklemek için "Müşteri Ekle" butonuna tıklayın.</p>
               </TableCell>
             </TableRow>
-          ))}
+          ) : (
+            customers.map((customer) => (
+              <TableRow key={customer.id}>
+                <TableCell className="font-medium">{customer.name}</TableCell>
+                <TableCell>{customer.phone}</TableCell>
+                <TableCell className="hidden md:table-cell">{customer.email}</TableCell>
+                <TableCell className="hidden md:table-cell">{customer.lastContact}</TableCell>
+                <TableCell className="hidden md:table-cell">
+                  <span
+                    className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                      customer.status === 'active'
+                        ? 'bg-green-100 text-green-800'
+                        : customer.status === 'new'
+                        ? 'bg-blue-100 text-blue-800'
+                        : 'bg-gray-100 text-gray-800'
+                    }`}
+                  >
+                    {customer.status === 'active'
+                      ? 'Aktif'
+                      : customer.status === 'new'
+                      ? 'Yeni'
+                      : 'Pasif'}
+                  </span>
+                </TableCell>
+                <TableCell className="text-right">
+                  <div className="flex justify-end space-x-2">
+                    <Button variant="outline" size="icon" onClick={handleAction}>
+                      <MessageSquare className="h-4 w-4" />
+                    </Button>
+                    <Button variant="outline" size="icon" onClick={handleAction}>
+                      <Phone className="h-4 w-4" />
+                    </Button>
+                    <Button variant="outline" size="icon" onClick={handleAction}>
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </Table>
     </div>

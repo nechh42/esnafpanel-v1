@@ -14,34 +14,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Customer } from '@/components/Customers/Customer';
 import { Activity } from '@/components/Dashboard/Activity';
 
-// Sample data for demonstration
-const sampleCustomers: Customer[] = [
-  {
-    id: "1",
-    name: "Ahmet Yılmaz",
-    phone: "+90 555 123 4567",
-    email: "ahmet@example.com",
-    lastContact: "2023-07-10",
-    status: "active"
-  },
-  {
-    id: "2",
-    name: "Ayşe Demir",
-    phone: "+90 532 987 6543",
-    email: "ayse@example.com",
-    lastContact: "2023-07-09",
-    status: "active"
-  },
-  {
-    id: "3",
-    name: "Mehmet Kaya",
-    phone: "+90 541 234 5678",
-    email: "mehmet@example.com",
-    lastContact: "2023-07-07",
-    status: "active"
-  }
-];
-
 interface BusinessSetup {
   businessName: string;
   businessType: string;
@@ -52,7 +24,7 @@ const Index = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [businessSetup, setBusinessSetup] = useState<BusinessSetup | null>(null);
-  const [customers, setCustomers] = useState(sampleCustomers);
+  const [customers, setCustomers] = useState<Customer[]>([]);
   const [isAddCustomerOpen, setIsAddCustomerOpen] = useState(false);
   
   useEffect(() => {
@@ -108,25 +80,25 @@ const Index = () => {
           title="Toplam Müşteri" 
           value={customers.length.toString()}
           icon={<User className="h-5 w-5" />}
-          trend={{ value: 10, isUp: true }}
+          trend={{ value: 0, isUp: true }}
         />
         <StatsCard 
           title="Bugünkü Mesajlar" 
-          value="12" 
+          value="0" 
           icon={<MessageSquare className="h-5 w-5" />}
-          trend={{ value: 25, isUp: true }}
+          trend={{ value: 0, isUp: true }}
         />
         <StatsCard 
           title="Açık Siparişler" 
-          value="3" 
+          value="0" 
           icon={<Calendar className="h-5 w-5" />}
-          trend={{ value: 5, isUp: false }}
+          trend={{ value: 0, isUp: false }}
         />
         <StatsCard 
           title="WhatsApp Aramaları" 
-          value="7" 
+          value="0" 
           icon={<Phone className="h-5 w-5" />}
-          trend={{ value: 12, isUp: true }}
+          trend={{ value: 0, isUp: true }}
         />
       </div>
       
@@ -142,29 +114,7 @@ const Index = () => {
         </div>
         
         <div>
-          <RecentActivitiesList activities={[
-            {
-              id: "1",
-              type: "message",
-              name: "Ahmet Yılmaz",
-              description: "WhatsApp mesajı gönderdi",
-              time: "10 dakika önce"
-            },
-            {
-              id: "2",
-              type: "order",
-              name: "Mehmet Kaya",
-              description: "Yeni sipariş oluşturdu",
-              time: "2 saat önce"
-            },
-            {
-              id: "3",
-              type: "customer",
-              name: "Ayşe Demir",
-              description: "Müşteri profili güncellendi",
-              time: "3 saat önce"
-            }
-          ]} />
+          <RecentActivitiesList activities={[]} />
         </div>
       </div>
       

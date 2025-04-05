@@ -7,37 +7,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import OrderForm from '@/components/Orders/OrderForm';
 import { useToast } from '@/hooks/use-toast';
 
-// Sample data
-const sampleOrders: Order[] = [
-  {
-    id: "ORD8372",
-    customerName: "Ahmet Yılmaz",
-    customerPhone: "+90 555 123 4567",
-    date: "05.07.2023",
-    total: "350.00 ₺",
-    status: "completed"
-  },
-  {
-    id: "ORD6291",
-    customerName: "Ayşe Demir",
-    customerPhone: "+90 532 987 6543",
-    date: "04.07.2023",
-    total: "180.50 ₺",
-    status: "processing"
-  },
-  {
-    id: "ORD4510",
-    customerName: "Mehmet Kaya",
-    customerPhone: "+90 541 234 5678",
-    date: "03.07.2023",
-    total: "420.75 ₺",
-    status: "pending"
-  }
-];
-
 const Orders = () => {
   const { toast } = useToast();
-  const [orders, setOrders] = useState<Order[]>(sampleOrders);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [isAddOrderOpen, setIsAddOrderOpen] = useState(false);
 
   const handleAddOrder = () => {
