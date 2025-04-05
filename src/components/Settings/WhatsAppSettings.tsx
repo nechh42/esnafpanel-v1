@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,12 +8,28 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from '@/components/ui/textarea';
-import { Phone, MessageSquare, Zap, RefreshCw } from 'lucide-react';
+import { Phone, MessageSquare, Zap, RefreshCw, AlertCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const WhatsAppSettings = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [connectedNumber, setConnectedNumber] = useState('');
   const [whatsappStatus, setWhatsappStatus] = useState('disconnected'); // connected, disconnected, connecting
+  const [isLoading, setIsLoading] = useState(false);
+  
+  useEffect(() => {
+    // Sayfa yüklendiğinde WhatsApp durumunu localStorage'dan kontrol et
+    const storedStatus = localStorage.getItem('whatsappStatus');
+    if (storedStatus === 'connected') {
+      setWhatsappStatus('connected');
+      
+      // Bağlı telefon numarasını al
+      const phoneNumber = localStorage.getItem('whatsappPhone') || '';
+      setConnectedNumber(phoneNumber);
+    }
+  }, []);
   
   const [settings, setSettings] = useState({
     autoReply: true,
@@ -38,6 +55,9 @@ const WhatsAppSettings = () => {
   };
 
   const handleSaveTemplates = () => {
+    // Template'leri localStorage'a kaydet
+    localStorage.setItem('whatsappTemplates', JSON.stringify(templates));
+    
     toast({
       title: "Şablonlar kaydedildi",
       description: "WhatsApp mesaj şablonlarınız başarıyla güncellendi.",
@@ -45,6 +65,9 @@ const WhatsAppSettings = () => {
   };
 
   const handleSaveSettings = () => {
+    // Ayarları localStorage'a kaydet
+    localStorage.setItem('whatsappSettings', JSON.stringify(settings));
+    
     toast({
       title: "Ayarlar güncellendi",
       description: "WhatsApp ayarlarınız başarıyla kaydedildi.",
@@ -61,20 +84,46 @@ const WhatsAppSettings = () => {
       return;
     }
     
-    // Connect directly without QR scanning
-    setWhatsappStatus('connected');
-    toast({
-      title: "WhatsApp Bağlandı",
-      description: `${connectedNumber} numaralı WhatsApp hesabınız başarıyla bağlandı.`,
-    });
+    setIsLoading(true);
+    
+    // Bağlantı sürecini simüle et
+    setTimeout(() => {
+      // Bağlantı durumunu ve telefon numarasını localStorage'a kaydet
+      localStorage.setItem('whatsappStatus', 'connected');
+      localStorage.setItem('whatsappPhone', connectedNumber);
+      
+      setWhatsappStatus('connected');
+      setIsLoading(false);
+      
+      toast({
+        title: "WhatsApp Bağlandı",
+        description: `${connectedNumber} numaralı WhatsApp hesabınız başarıyla bağlandı.`,
+      });
+    }, 1500);
   };
 
   const handleDisconnect = () => {
-    setWhatsappStatus('disconnected');
-    toast({
-      title: "WhatsApp Bağlantısı Kesildi",
-      description: "WhatsApp bağlantınız başarıyla kesildi.",
-    });
+    setIsLoading(true);
+    
+    // Bağlantı kesme sürecini simüle et
+    setTimeout(() => {
+      // LocalStorage'dan bağlantı bilgilerini kaldır
+      localStorage.removeItem('whatsappStatus');
+      localStorage.removeItem('whatsappPhone');
+      
+      setWhatsappStatus('disconnected');
+      setConnectedNumber('');
+      setIsLoading(false);
+      
+      toast({
+        title: "WhatsApp Bağlantısı Kesildi",
+        description: "WhatsApp bağlantınız başarıyla kesildi.",
+      });
+    }, 1000);
+  };
+
+  const goToConnect = () => {
+    navigate('/whatsapp-connect');
   };
 
   return (
@@ -89,6 +138,14 @@ const WhatsAppSettings = () => {
         <CardContent className="space-y-6">
           {whatsappStatus === 'disconnected' ? (
             <div className="space-y-4">
+              <Alert className="bg-amber-50 border-amber-200">
+                <AlertCircle className="h-4 w-4 text-amber-600" />
+                <AlertTitle className="text-amber-800">WhatsApp Bağlantısı Yok</AlertTitle>
+                <AlertDescription className="text-amber-700">
+                  WhatsApp API bağlantısı kurulmamış. WhatsApp özelliklerini kullanmak için bağlantı kurun.
+                </AlertDescription>
+              </Alert>
+              
               <div className="space-y-2">
                 <Label htmlFor="whatsappNumber">WhatsApp Telefon Numarası</Label>
                 <div className="flex space-x-2">
@@ -98,11 +155,25 @@ const WhatsAppSettings = () => {
                     value={connectedNumber}
                     onChange={(e) => setConnectedNumber(e.target.value)}
                   />
-                  <Button onClick={handleConnect}>Bağlan</Button>
+                  <Button 
+                    onClick={handleConnect}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? "Bağlanıyor..." : "Bağlan"}
+                  </Button>
                 </div>
                 <p className="text-sm text-muted-foreground mt-1">
                   WhatsApp Business API hesabınızı bağlamak için geçerli bir telefon numarası girin.
                 </p>
+              </div>
+              
+              <div className="flex justify-center mt-4">
+                <Button 
+                  variant="outline"
+                  onClick={goToConnect}
+                >
+                  WhatsApp QR Kod ile Bağlan
+                </Button>
               </div>
               
               <div className="bg-muted p-4 rounded-md">
@@ -132,12 +203,27 @@ const WhatsAppSettings = () => {
                   <p className="text-sm text-muted-foreground">WhatsApp API bağlantınız aktif</p>
                 </div>
                 <div className="flex space-x-2">
-                  <Button size="sm" variant="outline" onClick={() => toast({ title: "Yenileniyor...", description: "WhatsApp bağlantınız yenileniyor." })}>
-                    <RefreshCw className="h-4 w-4 mr-2" />
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    onClick={() => {
+                      toast({ 
+                        title: "Yenileniyor...", 
+                        description: "WhatsApp bağlantınız yenileniyor." 
+                      });
+                    }}
+                    disabled={isLoading}
+                  >
+                    <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
                     Yenile
                   </Button>
-                  <Button size="sm" variant="destructive" onClick={handleDisconnect}>
-                    Bağlantıyı Kes
+                  <Button 
+                    size="sm" 
+                    variant="destructive" 
+                    onClick={handleDisconnect}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? "İşlem yapılıyor..." : "Bağlantıyı Kes"}
                   </Button>
                 </div>
               </div>

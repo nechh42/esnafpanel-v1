@@ -1,27 +1,40 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/Layout/MainLayout';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
 import { QrCode, Smartphone, RefreshCw } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const WhatsAppConnect = () => {
   const [connectionStatus, setConnectionStatus] = useState<'disconnected' | 'connecting' | 'connected'>('disconnected');
   const [qrExpired, setQrExpired] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+
+  // İlk yükleme sırasında localStorage'dan bağlantı durumunu kontrol et
+  useEffect(() => {
+    const storedStatus = localStorage.getItem('whatsappStatus');
+    if (storedStatus === 'connected') {
+      setConnectionStatus('connected');
+    }
+  }, []);
 
   const handleConnect = () => {
+    setIsLoading(true);
     setConnectionStatus('connecting');
     toast({
       title: "QR Kodu Oluşturuluyor",
       description: "Lütfen WhatsApp uygulamanızdaki QR kod tarayıcı ile bağlanın.",
     });
     
-    // Simulate QR code generation delay
+    // QR kod oluşturma gecikmesini simüle et
     setTimeout(() => {
       setQrExpired(false);
+      setIsLoading(false);
     }, 1500);
     
-    // Simulate QR code expiration after 1 minute
+    // 1 dakika sonra QR kodun süresinin dolduğunu simüle et
     setTimeout(() => {
       if (connectionStatus !== 'connected') {
         setQrExpired(true);
@@ -35,21 +48,23 @@ const WhatsAppConnect = () => {
   };
   
   const handleRefreshQr = () => {
+    setIsLoading(true);
     setQrExpired(false);
     toast({
       title: "QR Kodu Yenileniyor",
       description: "Yeni QR kodu oluşturuluyor...",
     });
     
-    // Simulate QR refresh delay
+    // QR yenileme gecikmesini simüle et
     setTimeout(() => {
+      setIsLoading(false);
       toast({
         title: "QR Kodu Hazır",
         description: "Lütfen WhatsApp uygulamanızdaki QR kod tarayıcı ile bağlanın.",
       });
     }, 1500);
     
-    // Simulate QR code expiration after 1 minute
+    // 1 dakika sonra QR kodun süresinin dolduğunu simüle et
     setTimeout(() => {
       if (connectionStatus !== 'connected') {
         setQrExpired(true);
@@ -58,12 +73,30 @@ const WhatsAppConnect = () => {
   };
   
   const simulateConnection = () => {
-    // For demo purposes only - simulates successful connection
+    // Demo amaçlı - başarılı bağlantıyı simüle et
     setConnectionStatus('connected');
+    // Bağlantı durumunu localStorage'a kaydet
+    localStorage.setItem('whatsappStatus', 'connected');
+    
     toast({
       title: "Bağlantı Başarılı",
       description: "WhatsApp hesabınız başarıyla EsnafPanel'e bağlandı.",
     });
+  };
+
+  const handleDisconnect = () => {
+    setConnectionStatus('disconnected');
+    // LocalStorage'dan bağlantı durumunu kaldır
+    localStorage.removeItem('whatsappStatus');
+    
+    toast({
+      title: "Bağlantı Kesildi",
+      description: "WhatsApp hesabınızın bağlantısı kesildi.",
+    });
+  };
+
+  const goToSettings = () => {
+    navigate('/settings?tab=whatsapp');
   };
 
   return (
@@ -89,9 +122,10 @@ const WhatsAppConnect = () => {
               <Button 
                 onClick={handleConnect}
                 className="bg-whatsapp hover:bg-whatsapp-dark w-full"
+                disabled={isLoading}
               >
                 <Smartphone className="h-5 w-5 mr-2" />
-                WhatsApp'a Bağlan
+                {isLoading ? "Bağlanıyor..." : "WhatsApp'a Bağlan"}
               </Button>
             </>
           )}
@@ -100,7 +134,11 @@ const WhatsAppConnect = () => {
             <>
               <div className="border-2 border-dashed border-gray-300 p-4 rounded-lg flex items-center justify-center mb-4" style={{height: "260px"}}>
                 <div className="text-center">
-                  <QrCode className="h-24 w-24 mx-auto mb-4 text-gray-800" />
+                  {isLoading ? (
+                    <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-green-600 mx-auto mb-4"></div>
+                  ) : (
+                    <QrCode className="h-24 w-24 mx-auto mb-4 text-gray-800" />
+                  )}
                   <p className="text-sm text-gray-600">Bu QR kodu, WhatsApp uygulamanızın QR tarayıcısı ile tarayın.</p>
                   <p className="text-xs text-gray-500 mt-2">Bu QR kodun süresi 1 dakika içinde dolacak.</p>
                   <Button 
@@ -114,9 +152,14 @@ const WhatsAppConnect = () => {
                 </div>
               </div>
               
-              <Button onClick={handleRefreshQr} variant="outline" className="w-full">
-                <RefreshCw className="h-4 w-4 mr-2" />
-                QR Kodu Yenile
+              <Button 
+                onClick={handleRefreshQr} 
+                variant="outline" 
+                className="w-full"
+                disabled={isLoading}
+              >
+                <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+                {isLoading ? "Yenileniyor..." : "QR Kodu Yenile"}
               </Button>
             </>
           )}
@@ -130,9 +173,13 @@ const WhatsAppConnect = () => {
                 </div>
               </div>
               
-              <Button onClick={handleRefreshQr} className="w-full">
-                <RefreshCw className="h-4 w-4 mr-2" />
-                Yeni QR Kodu Oluştur
+              <Button 
+                onClick={handleRefreshQr} 
+                className="w-full"
+                disabled={isLoading}
+              >
+                <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+                {isLoading ? "Oluşturuluyor..." : "Yeni QR Kodu Oluştur"}
               </Button>
             </>
           )}
@@ -146,13 +193,21 @@ const WhatsAppConnect = () => {
               <p className="text-gray-600 mb-4">
                 WhatsApp hesabınız başarıyla bağlandı. Artık müşterilerinizle WhatsApp üzerinden iletişim kurabilirsiniz.
               </p>
-              <Button 
-                variant="outline" 
-                className="w-full text-destructive hover:text-destructive"
-                onClick={() => setConnectionStatus('disconnected')}
-              >
-                Bağlantıyı Kes
-              </Button>
+              <div className="space-y-2">
+                <Button 
+                  onClick={goToSettings}
+                  className="w-full bg-whatsapp hover:bg-whatsapp-dark"
+                >
+                  WhatsApp Ayarlarını Yönet
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full text-destructive hover:text-destructive"
+                  onClick={handleDisconnect}
+                >
+                  Bağlantıyı Kes
+                </Button>
+              </div>
             </>
           )}
         </div>
