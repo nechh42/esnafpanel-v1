@@ -15,8 +15,17 @@ import {
   BadgeAlert
 } from 'lucide-react';
 
+export type BusinessType = 'retail' | 'beauty' | 'cafe' | 'restaurant' | 'clothing' | 
+  'gift' | 'food' | 'education' | 'parfumery' | 'pharmacy' | 'barber' | 
+  'bakery' | 'other' | 'service' | 'health' | string;
+
 // İşletme türleri ve özellikleri
-const businessTypeDetails = {
+const businessTypeDetails: Record<BusinessType, {
+  icon: React.ReactNode;
+  name: string;
+  description: string;
+  fields: string[];
+}> = {
   retail: {
     icon: <Store className="h-8 w-8" />,
     name: 'Perakende Mağaza',
@@ -110,19 +119,20 @@ const businessTypeDetails = {
 };
 
 interface BusinessTypeInfoProps {
-  businessType: string;
+  businessType?: BusinessType | null | undefined;
 }
 
 const BusinessTypeInfo: React.FC<BusinessTypeInfoProps> = ({ businessType }) => {
   // Eğer işletme türü belirlenmemişse veya geçersizse "other" olarak varsay
   const details = React.useMemo(() => {
     // businessType'in tanımlı bir tür olup olmadığını kontrol et
-    if (!businessType || !Object.prototype.hasOwnProperty.call(businessTypeDetails, businessType)) {
+    if (!businessType || typeof businessType !== 'string' || businessType.trim() === '') {
       console.log(`Geçersiz işletme türü: ${businessType}, varsayılan olarak 'other' kullanılıyor`);
       return businessTypeDetails.other;
     }
     
-    return businessTypeDetails[businessType as keyof typeof businessTypeDetails];
+    // Eğer businessType bizim listemizdeyse o türü, değilse other'ı kullan
+    return businessTypeDetails[businessType as BusinessType] || businessTypeDetails.other;
   }, [businessType]);
 
   return (

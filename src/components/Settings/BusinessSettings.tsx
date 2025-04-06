@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { BusinessType } from '@/components/Dashboard/BusinessTypeInfo';
 
 type BusinessSettingsProps = {
   businessData: any;
@@ -23,6 +23,23 @@ const BusinessSettings: React.FC<BusinessSettingsProps> = ({ businessData }) => 
   });
   
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    try {
+      const savedData = localStorage.getItem('businessData');
+      if (savedData) {
+        const parsedData = JSON.parse(savedData);
+        setFormData(prevData => ({
+          ...prevData,
+          ...parsedData
+        }));
+      }
+    } catch (error) {
+      console.error("İşletme verilerini yüklerken hata:", error);
+      setError("İşletme verileri yüklenemedi.");
+    }
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -35,17 +52,34 @@ const BusinessSettings: React.FC<BusinessSettingsProps> = ({ businessData }) => 
 
   const handleSave = () => {
     setIsLoading(true);
+    setError(null);
     
     try {
-      // In a real application, save to Supabase
-      // For now, just show a success toast and save to localStorage
-      localStorage.setItem('businessData', JSON.stringify(formData));
+      const dataToSave = {
+        ...formData,
+        businessType: formData.businessType || 'other'
+      };
+      
+      localStorage.setItem('businessData', JSON.stringify(dataToSave));
+      
+      try {
+        const businessSetup = localStorage.getItem('businessSetup');
+        if (businessSetup) {
+          const parsedSetup = JSON.parse(businessSetup);
+          parsedSetup.businessType = dataToSave.businessType;
+          parsedSetup.businessName = dataToSave.businessName;
+          localStorage.setItem('businessSetup', JSON.stringify(parsedSetup));
+        }
+      } catch (err) {
+        console.error("Setup senkronizasyon hatası:", err);
+      }
       
       toast({
         title: "İşletme güncellendi",
         description: "İşletme bilgileriniz başarıyla kaydedildi.",
       });
     } catch (error) {
+      setError("İşletme bilgileriniz kaydedilemedi.");
       toast({
         variant: "destructive",
         title: "Hata",
@@ -57,6 +91,24 @@ const BusinessSettings: React.FC<BusinessSettingsProps> = ({ businessData }) => 
     }
   };
 
+  const businessTypes = [
+    { id: 'retail', name: 'Perakende Satış' },
+    { id: 'restaurant', name: 'Restoran' },
+    { id: 'cafe', name: 'Kafe' },
+    { id: 'beauty', name: 'Güzellik/Kuaför' },
+    { id: 'barber', name: 'Berber' },
+    { id: 'clothing', name: 'Giyim Mağazası' },
+    { id: 'gift', name: 'Hediyelik Eşya' },
+    { id: 'food', name: 'Gıda Satışı' },
+    { id: 'bakery', name: 'Fırın/Pastane' },
+    { id: 'parfumery', name: 'Parfümeri/Kozmetik' },
+    { id: 'pharmacy', name: 'Eczane' },
+    { id: 'health', name: 'Sağlık Hizmetleri' },
+    { id: 'education', name: 'Eğitim/Kurs' },
+    { id: 'service', name: 'Hizmet Sektörü' },
+    { id: 'other', name: 'Diğer' },
+  ];
+
   return (
     <div className="space-y-6">
       <Card>
@@ -67,6 +119,11 @@ const BusinessSettings: React.FC<BusinessSettingsProps> = ({ businessData }) => 
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
+          {error && (
+            <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-md mb-4">
+              {error}
+            </div>
+          )}
           <div className="space-y-4">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="space-y-2">
@@ -88,21 +145,11 @@ const BusinessSettings: React.FC<BusinessSettingsProps> = ({ businessData }) => 
                     <SelectValue placeholder="İşletme türü seçin" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="retail">Perakende Satış</SelectItem>
-                    <SelectItem value="restaurant">Restoran/Kafe</SelectItem>
-                    <SelectItem value="cafe">Kafe</SelectItem>
-                    <SelectItem value="beauty">Güzellik/Kuaför</SelectItem>
-                    <SelectItem value="barber">Berber</SelectItem>
-                    <SelectItem value="clothing">Giyim Mağazası</SelectItem>
-                    <SelectItem value="gift">Hediyelik Eşya</SelectItem>
-                    <SelectItem value="food">Gıda Satışı</SelectItem>
-                    <SelectItem value="bakery">Fırın/Pastane</SelectItem>
-                    <SelectItem value="parfumery">Parfümeri/Kozmetik</SelectItem>
-                    <SelectItem value="pharmacy">Eczane</SelectItem>
-                    <SelectItem value="health">Sağlık Hizmetleri</SelectItem>
-                    <SelectItem value="education">Eğitim/Kurs</SelectItem>
-                    <SelectItem value="service">Hizmet Sektörü</SelectItem>
-                    <SelectItem value="other">Diğer</SelectItem>
+                    {businessTypes.map((type) => (
+                      <SelectItem key={type.id} value={type.id}>
+                        {type.name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
