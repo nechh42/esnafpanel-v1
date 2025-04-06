@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -134,13 +135,13 @@ const PricingPlans: React.FC<PricingPlansProps> = ({ businessData }) => {
   const getSelectedPlanPrice = () => {
     if (selectedPlan === "Başlangıç") {
       return selectedDuration === "monthly" ? "250 ₺" : 
-             selectedDuration === "quarterly" ? "675 ₺" : "1.200 ₺";
+             selectedDuration === "quarterly" ? "750 ₺" : "1.500 ₺";
     } else if (selectedPlan === "İşletme") {
       return selectedDuration === "monthly" ? "500 ₺" : 
-             selectedDuration === "quarterly" ? "1.350 ₺" : "2.400 ₺";
+             selectedDuration === "quarterly" ? "1.500 ₺" : "3.000 ₺";
     } else {
       return selectedDuration === "monthly" ? "900 ₺" : 
-             selectedDuration === "quarterly" ? "2.430 ₺" : "4.320 ₺";
+             selectedDuration === "quarterly" ? "2.700 ₺" : "5.400 ₺";
     }
   };
 
@@ -180,14 +181,12 @@ const PricingPlans: React.FC<PricingPlansProps> = ({ businessData }) => {
             <RadioGroupItem value="quarterly" id="quarterly" />
             <Label htmlFor="quarterly" className="flex items-center cursor-pointer">
               <span>3 Aylık</span>
-              <Badge variant="secondary" className="ml-2">%10 indirim</Badge>
             </Label>
           </div>
           <div className="flex items-center space-x-2 border p-4 rounded-md flex-1">
             <RadioGroupItem value="biannual" id="biannual" />
             <Label htmlFor="biannual" className="flex items-center cursor-pointer">
               <span>6 Aylık</span>
-              <Badge variant="secondary" className="ml-2">%20 indirim</Badge>
             </Label>
           </div>
         </RadioGroup>
@@ -203,12 +202,12 @@ const PricingPlans: React.FC<PricingPlansProps> = ({ businessData }) => {
             <div className="mb-4">
               <div className="text-2xl font-bold">
                 {selectedDuration === "monthly" && "250 ₺/ay"}
-                {selectedDuration === "quarterly" && "675 ₺"}
-                {selectedDuration === "biannual" && "1.200 ₺"}
+                {selectedDuration === "quarterly" && "750 ₺"}
+                {selectedDuration === "biannual" && "1.500 ₺"}
               </div>
               <div className="text-sm text-muted-foreground">
-                {selectedDuration === "quarterly" && "3 aylık ödeme, %10 indirimli"}
-                {selectedDuration === "biannual" && "6 aylık ödeme, %20 indirimli"}
+                {selectedDuration === "quarterly" && "3 aylık ödeme"}
+                {selectedDuration === "biannual" && "6 aylık ödeme"}
               </div>
             </div>
             <ul className="list-none space-y-2">
@@ -265,12 +264,12 @@ const PricingPlans: React.FC<PricingPlansProps> = ({ businessData }) => {
             <div className="mb-4">
               <div className="text-2xl font-bold">
                 {selectedDuration === "monthly" && "500 ₺/ay"}
-                {selectedDuration === "quarterly" && "1.350 ₺"}
-                {selectedDuration === "biannual" && "2.400 ₺"}
+                {selectedDuration === "quarterly" && "1.500 ₺"}
+                {selectedDuration === "biannual" && "3.000 ₺"}
               </div>
               <div className="text-sm text-muted-foreground">
-                {selectedDuration === "quarterly" && "3 aylık ödeme, %10 indirimli"}
-                {selectedDuration === "biannual" && "6 aylık ödeme, %20 indirimli"}
+                {selectedDuration === "quarterly" && "3 aylık ödeme"}
+                {selectedDuration === "biannual" && "6 aylık ödeme"}
               </div>
             </div>
             <ul className="list-none space-y-2">
@@ -324,12 +323,12 @@ const PricingPlans: React.FC<PricingPlansProps> = ({ businessData }) => {
             <div className="mb-4">
               <div className="text-2xl font-bold">
                 {selectedDuration === "monthly" && "900 ₺/ay"}
-                {selectedDuration === "quarterly" && "2.430 ₺"}
-                {selectedDuration === "biannual" && "4.320 ₺"}
+                {selectedDuration === "quarterly" && "2.700 ₺"}
+                {selectedDuration === "biannual" && "5.400 ₺"}
               </div>
               <div className="text-sm text-muted-foreground">
-                {selectedDuration === "quarterly" && "3 aylık ödeme, %10 indirimli"}
-                {selectedDuration === "biannual" && "6 aylık ödeme, %20 indirimli"}
+                {selectedDuration === "quarterly" && "3 aylık ödeme"}
+                {selectedDuration === "biannual" && "6 aylık ödeme"}
               </div>
             </div>
             <ul className="list-none space-y-2">

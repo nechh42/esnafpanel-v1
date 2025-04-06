@@ -2,14 +2,16 @@
 import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/Layout/MainLayout';
 import { Button } from '@/components/ui/button';
-import { toast } from '@/hooks/use-toast';
-import { QrCode, Smartphone, RefreshCw } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { Smartphone, Phone } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 const WhatsAppConnect = () => {
   const [connectionStatus, setConnectionStatus] = useState<'disconnected' | 'connecting' | 'connected'>('disconnected');
-  const [qrExpired, setQrExpired] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState('');
   const navigate = useNavigate();
 
   // İlk yükleme sırasında localStorage'dan bağlantı durumunu kontrol et
@@ -17,87 +19,67 @@ const WhatsAppConnect = () => {
     const storedStatus = localStorage.getItem('whatsappStatus');
     if (storedStatus === 'connected') {
       setConnectionStatus('connected');
+      const storedPhone = localStorage.getItem('whatsappPhone');
+      if (storedPhone) {
+        setPhoneNumber(storedPhone);
+      }
     }
   }, []);
 
   const handleConnect = () => {
+    if (!phoneNumber.trim()) {
+      toast({
+        title: "Hata",
+        description: "Lütfen bir telefon numarası girin.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setIsLoading(true);
     setConnectionStatus('connecting');
-    toast({
-      title: "QR Kodu Oluşturuluyor",
-      description: "Lütfen WhatsApp uygulamanızdaki QR kod tarayıcı ile bağlanın.",
-    });
     
-    // QR kod oluşturma gecikmesini simüle et
+    // Bağlantı sürecini simüle et
     setTimeout(() => {
-      setQrExpired(false);
+      // Bağlantı başarılı
+      setConnectionStatus('connected');
+      // Bağlantı durumunu ve telefon numarasını localStorage'a kaydet
+      localStorage.setItem('whatsappStatus', 'connected');
+      localStorage.setItem('whatsappPhone', phoneNumber);
+      
       setIsLoading(false);
-    }, 1500);
-    
-    // 1 dakika sonra QR kodun süresinin dolduğunu simüle et
-    setTimeout(() => {
-      if (connectionStatus !== 'connected') {
-        setQrExpired(true);
-        toast({
-          title: "QR Kod Süresi Doldu",
-          description: "Yeni bir QR kod oluşturmak için 'Yeni QR Kodu Oluştur' butonuna tıklayın.",
-          variant: "destructive",
-        });
-      }
-    }, 60000);
-  };
-  
-  const handleRefreshQr = () => {
-    setIsLoading(true);
-    setQrExpired(false);
-    toast({
-      title: "QR Kodu Yenileniyor",
-      description: "Yeni QR kodu oluşturuluyor...",
-    });
-    
-    // QR yenileme gecikmesini simüle et
-    setTimeout(() => {
-      setIsLoading(false);
+      
       toast({
-        title: "QR Kodu Hazır",
-        description: "Lütfen WhatsApp uygulamanızdaki QR kod tarayıcı ile bağlanın.",
+        title: "WhatsApp Bağlandı",
+        description: "WhatsApp hesabınız başarıyla EsnafPanel'e bağlandı.",
       });
-    }, 1500);
-    
-    // 1 dakika sonra QR kodun süresinin dolduğunu simüle et
-    setTimeout(() => {
-      if (connectionStatus !== 'connected') {
-        setQrExpired(true);
-      }
-    }, 60000);
-  };
-  
-  const simulateConnection = () => {
-    // Demo amaçlı - başarılı bağlantıyı simüle et
-    setConnectionStatus('connected');
-    // Bağlantı durumunu localStorage'a kaydet
-    localStorage.setItem('whatsappStatus', 'connected');
-    
-    toast({
-      title: "Bağlantı Başarılı",
-      description: "WhatsApp hesabınız başarıyla EsnafPanel'e bağlandı.",
-    });
+    }, 2000);
   };
 
   const handleDisconnect = () => {
-    setConnectionStatus('disconnected');
-    // LocalStorage'dan bağlantı durumunu kaldır
-    localStorage.removeItem('whatsappStatus');
+    setIsLoading(true);
     
-    toast({
-      title: "Bağlantı Kesildi",
-      description: "WhatsApp hesabınızın bağlantısı kesildi.",
-    });
+    // Bağlantı kesme işlemini simüle et
+    setTimeout(() => {
+      setConnectionStatus('disconnected');
+      // LocalStorage'dan bağlantı durumunu kaldır
+      localStorage.removeItem('whatsappStatus');
+      localStorage.removeItem('whatsappPhone');
+      
+      setIsLoading(false);
+      
+      toast({
+        title: "Bağlantı Kesildi",
+        description: "WhatsApp hesabınızın bağlantısı kesildi.",
+      });
+    }, 1000);
   };
 
   const goToSettings = () => {
     navigate('/settings?tab=whatsapp');
   };
+
+  const { toast } = useToast();
 
   return (
     <MainLayout>
@@ -117,71 +99,43 @@ const WhatsAppConnect = () => {
                 <span>WhatsApp bağlantısı kurulmadı</span>
               </div>
               <p className="text-gray-600 mb-4">
-                İşletmenizin WhatsApp hesabını bağlamak için, "WhatsApp'a Bağlan" butonuna tıklayın ve telefonunuzdaki WhatsApp uygulamasından QR kodu tarayın.
+                İşletmenizin WhatsApp hesabını bağlamak için telefon numaranızı girin ve "WhatsApp'a Bağlan" butonuna tıklayın.
               </p>
+              
+              <div className="space-y-4 mb-4">
+                <div>
+                  <Label htmlFor="phoneNumber">WhatsApp Telefon Numarası</Label>
+                  <Input
+                    id="phoneNumber"
+                    placeholder="+90 5XX XXX XX XX"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    className="mb-2"
+                  />
+                  <p className="text-sm text-gray-500">
+                    WhatsApp'ta kullandığınız işletme telefon numaranızı girin.
+                  </p>
+                </div>
+              </div>
+              
               <Button 
                 onClick={handleConnect}
                 className="bg-whatsapp hover:bg-whatsapp-dark w-full"
                 disabled={isLoading}
               >
-                <Smartphone className="h-5 w-5 mr-2" />
+                <Phone className="h-5 w-5 mr-2" />
                 {isLoading ? "Bağlanıyor..." : "WhatsApp'a Bağlan"}
               </Button>
             </>
           )}
           
-          {connectionStatus === 'connecting' && !qrExpired && (
-            <>
-              <div className="border-2 border-dashed border-gray-300 p-4 rounded-lg flex items-center justify-center mb-4" style={{height: "260px"}}>
-                <div className="text-center">
-                  {isLoading ? (
-                    <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-green-600 mx-auto mb-4"></div>
-                  ) : (
-                    <QrCode className="h-24 w-24 mx-auto mb-4 text-gray-800" />
-                  )}
-                  <p className="text-sm text-gray-600">Bu QR kodu, WhatsApp uygulamanızın QR tarayıcısı ile tarayın.</p>
-                  <p className="text-xs text-gray-500 mt-2">Bu QR kodun süresi 1 dakika içinde dolacak.</p>
-                  <Button 
-                    variant="link" 
-                    size="sm"
-                    onClick={simulateConnection}
-                    className="mt-4 text-xs text-primary"
-                  >
-                    (Demo: Bağlantıyı Simüle Et)
-                  </Button>
-                </div>
-              </div>
-              
-              <Button 
-                onClick={handleRefreshQr} 
-                variant="outline" 
-                className="w-full"
-                disabled={isLoading}
-              >
-                <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-                {isLoading ? "Yenileniyor..." : "QR Kodu Yenile"}
-              </Button>
-            </>
-          )}
-          
-          {connectionStatus === 'connecting' && qrExpired && (
-            <>
-              <div className="border-2 border-dashed border-gray-300 p-4 rounded-lg flex items-center justify-center mb-4" style={{height: "260px"}}>
-                <div className="text-center">
-                  <div className="text-destructive mb-2">QR Kod Süresi Doldu</div>
-                  <p className="text-sm text-gray-600">Yeni bir QR kodu oluşturmak için aşağıdaki butona tıklayın.</p>
-                </div>
-              </div>
-              
-              <Button 
-                onClick={handleRefreshQr} 
-                className="w-full"
-                disabled={isLoading}
-              >
-                <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-                {isLoading ? "Oluşturuluyor..." : "Yeni QR Kodu Oluştur"}
-              </Button>
-            </>
+          {connectionStatus === 'connecting' && (
+            <div className="flex flex-col items-center justify-center py-10">
+              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-green-600 mb-6"></div>
+              <p className="text-center text-gray-600">
+                WhatsApp hesabınız bağlanıyor. Lütfen bekleyin...
+              </p>
+            </div>
           )}
           
           {connectionStatus === 'connected' && (
@@ -190,6 +144,9 @@ const WhatsAppConnect = () => {
                 <Smartphone className="h-5 w-5 mr-2" />
                 <span>WhatsApp bağlantısı aktif</span>
               </div>
+              <p className="text-gray-600 mb-2">
+                Bağlı telefon numarası: <strong>{phoneNumber}</strong>
+              </p>
               <p className="text-gray-600 mb-4">
                 WhatsApp hesabınız başarıyla bağlandı. Artık müşterilerinizle WhatsApp üzerinden iletişim kurabilirsiniz.
               </p>
