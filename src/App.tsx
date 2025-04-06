@@ -100,7 +100,8 @@ const App = () => {
     
     const startDate = new Date(demoStartDate);
     const currentDate = new Date();
-    const diffDays = Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24));
+    const diffTime = currentDate.getTime() - startDate.getTime();
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     
     // Demo expires after 10 days
     if (diffDays >= 10) {

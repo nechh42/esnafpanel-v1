@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { User, MessageSquare, Calendar, Settings, Phone, CreditCard, AlertTriangle } from 'lucide-react';
@@ -106,7 +105,8 @@ const Sidebar = () => {
     
     const startDate = new Date(demoStartDate);
     const currentDate = new Date();
-    const diffDays = Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24));
+    const diffTime = currentDate.getTime() - startDate.getTime();
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     
     // Demo expires after 10 days
     if (diffDays >= 10) {
@@ -134,7 +134,7 @@ const Sidebar = () => {
         navigate('/subscription-required');
       }
     }
-  }, [demoExpired, isDemoMode, location.pathname, navigate]);
+  }, [demoExpired, isDemoMode, location.pathname, navigate, businessSetup]);
 
   return (
     <aside className="hidden md:flex flex-col w-64 bg-white border-r h-screen sticky top-0">

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MainLayout from '@/components/Layout/MainLayout';
@@ -68,7 +67,8 @@ const Index = () => {
     
     const startDate = new Date(demoStartDate);
     const currentDate = new Date();
-    const diffDays = Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24));
+    const diffTime = currentDate.getTime() - startDate.getTime();
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     
     // Demo expires after 10 days
     if (diffDays >= 10) {
@@ -97,7 +97,7 @@ const Index = () => {
         toast({
           title: "Demo Süresi Bitiyor",
           description: "Demo süreniz 1 gün içinde dolacak. Uygulamayı kullanmaya devam etmek için abonelik planı seçmelisiniz.",
-          variant: "warning",
+          variant: "destructive",
         });
       }
     }
