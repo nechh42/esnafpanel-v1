@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MainLayout from '@/components/Layout/MainLayout';
@@ -7,7 +8,7 @@ import CustomerList from '@/components/Customers/CustomerList';
 import BusinessTypeInfo from '@/components/Dashboard/BusinessTypeInfo';
 import { User, MessageSquare, Calendar, Phone, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import CustomerForm, { CustomerFormData } from '@/components/Customers/CustomerForm';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Customer } from '@/components/Customers/Customer';
