@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { User, MessageSquare, Calendar, Settings, Phone, CreditCard, AlertTriangle } from 'lucide-react';
+import { User, MessageSquare, Calendar, Settings, Phone, CreditCard, AlertTriangle, Home } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -16,13 +16,33 @@ const Sidebar = () => {
   const [isDemoMode, setIsDemoMode] = useState(true);
   const [demoExpiryDays, setDemoExpiryDays] = useState(10);
   const [demoExpired, setDemoExpired] = useState(false);
+  const [language, setLanguage] = useState('tr');
+  
+  // Listen for language changes
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem('appLanguage');
+    if (savedLanguage) {
+      setLanguage(savedLanguage);
+    }
+    
+    const handleLanguageChange = (event: CustomEvent) => {
+      setLanguage(event.detail.language);
+    };
+    
+    window.addEventListener('languageChange', handleLanguageChange as EventListener);
+    return () => {
+      window.removeEventListener('languageChange', handleLanguageChange as EventListener);
+    };
+  }, []);
   
   const navItems = [
-    { path: '/', icon: <User className="h-5 w-5" />, label: 'Müşteriler' },
-    { path: '/messages', icon: <MessageSquare className="h-5 w-5" />, label: 'Mesajlar' },
-    { path: '/orders', icon: <Calendar className="h-5 w-5" />, label: 'Siparişler' },
-    { path: '/whatsapp-connect', icon: <Phone className="h-5 w-5" />, label: 'WhatsApp Bağlantısı' },
-    { path: '/settings', icon: <Settings className="h-5 w-5" />, label: 'Ayarlar' },
+    { path: '/', icon: <Home className="h-5 w-5" />, label: language === 'tr' ? 'Ana Sayfa' : 'Home' },
+    { path: '/', icon: <User className="h-5 w-5" />, label: language === 'tr' ? 'Müşteriler' : 'Customers' },
+    { path: '/messages', icon: <MessageSquare className="h-5 w-5" />, label: language === 'tr' ? 'Mesajlar' : 'Messages' },
+    { path: '/orders', icon: <Calendar className="h-5 w-5" />, label: language === 'tr' ? 'Siparişler' : 'Orders' },
+    { path: '/whatsapp-connect', icon: <Phone className="h-5 w-5" />, label: language === 'tr' ? 'WhatsApp Bağlantısı' : 'WhatsApp Connection' },
+    { path: '/settings?tab=subscription', icon: <CreditCard className="h-5 w-5" />, label: language === 'tr' ? 'Abonelik' : 'Subscription' },
+    { path: '/settings', icon: <Settings className="h-5 w-5" />, label: language === 'tr' ? 'Ayarlar' : 'Settings' },
   ];
 
   // Get the businessSetup from localStorage
@@ -30,27 +50,27 @@ const Sidebar = () => {
   const businessSetup = businessSetupStr ? JSON.parse(businessSetupStr) : null;
   
   // Abonelik bilgisine göre hangi metni göstereceğiz
-  let subscriptionText = `Demo Mod (${demoExpiryDays} Gün)`;
+  let subscriptionText = language === 'tr' ? `Demo Mod (${demoExpiryDays} Gün)` : `Demo Mode (${demoExpiryDays} Days)`;
   let subscriptionClass = 'bg-yellow-100 text-yellow-800';
   
   if (businessSetup?.subscriptionPlan && !isDemoMode) {
     if (businessSetup.subscriptionPlan === 'premium') {
-      subscriptionText = 'Premium Paket';
+      subscriptionText = language === 'tr' ? 'Premium Paket' : 'Premium Plan';
       subscriptionClass = 'bg-green-100 text-green-800';
     } else if (businessSetup.subscriptionPlan === 'business') {
-      subscriptionText = 'İşletme Paketi';
+      subscriptionText = language === 'tr' ? 'İşletme Paketi' : 'Business Plan';
       subscriptionClass = 'bg-blue-100 text-blue-800';
     } else if (businessSetup.subscriptionPlan === 'starter') {
-      subscriptionText = 'Başlangıç Paketi';
+      subscriptionText = language === 'tr' ? 'Başlangıç Paketi' : 'Starter Plan';
       subscriptionClass = 'bg-blue-100 text-blue-800';
     } else {
-      subscriptionText = `Demo (${demoExpiryDays} Gün)`;
+      subscriptionText = language === 'tr' ? `Demo (${demoExpiryDays} Gün)` : `Demo (${demoExpiryDays} Days)`;
     }
   }
   
   // If demo has expired, update text
   if (demoExpired && isDemoMode) {
-    subscriptionText = 'Demo Süresi Doldu';
+    subscriptionText = language === 'tr' ? 'Demo Süresi Doldu' : 'Demo Expired';
     subscriptionClass = 'bg-red-100 text-red-800';
   }
 
@@ -59,13 +79,13 @@ const Sidebar = () => {
     
     if (checked) {
       toast({
-        title: "Demo Mod Aktif",
-        description: "Şu anda demo modunda çalışıyorsunuz. Tüm veriler geçicidir ve kaydedilmez.",
+        title: language === 'tr' ? "Demo Mod Aktif" : "Demo Mode Active",
+        description: language === 'tr' ? "Şu anda demo modunda çalışıyorsunuz. Tüm veriler geçicidir ve kaydedilmez." : "You are currently working in demo mode. All data is temporary and will not be saved.",
       });
     } else {
       toast({
-        title: "Demo Mod Kapalı",
-        description: "Gerçek mod aktif. Verileriniz kaydedilecek ve gerçek müşterilerle çalışabilirsiniz.",
+        title: language === 'tr' ? "Demo Mod Kapalı" : "Demo Mode Off",
+        description: language === 'tr' ? "Gerçek mod aktif. Verileriniz kaydedilecek ve gerçek müşterilerle çalışabilirsiniz." : "Real mode active. Your data will be saved and you can work with real customers.",
       });
     }
   };
@@ -141,7 +161,9 @@ const Sidebar = () => {
     <aside className="hidden md:flex flex-col w-64 bg-white border-r h-screen sticky top-0">
       <div className="p-4 border-b">
         <div className="flex items-center space-x-2">
-          <img src="/logo.svg" alt="EsnafPanel Logo" className="w-10 h-10" />
+          <Link to="/">
+            <img src="/logo.svg" alt="EsnafPanel Logo" className="w-10 h-10" />
+          </Link>
           <div>
             <h2 className="font-bold text-lg">EsnafPanel</h2>
             <div className="flex items-center mt-1">
@@ -155,8 +177,8 @@ const Sidebar = () => {
         {isDemoMode && !demoExpired && (
           <div className="mt-2">
             <div className="flex justify-between text-xs text-gray-600 mb-1">
-              <span>Demo süresi</span>
-              <span>{demoExpiryDays}/10 gün</span>
+              <span>{language === 'tr' ? 'Demo süresi' : 'Demo period'}</span>
+              <span>{demoExpiryDays}/10 {language === 'tr' ? 'gün' : 'days'}</span>
             </div>
             <Progress value={(demoExpiryDays / 10) * 100} className="h-1.5" />
           </div>
@@ -165,7 +187,7 @@ const Sidebar = () => {
         {isDemoMode && demoExpired && (
           <div className="mt-2 flex items-center text-red-500 text-xs">
             <AlertTriangle className="h-3 w-3 mr-1" />
-            <span>Demo süreniz doldu!</span>
+            <span>{language === 'tr' ? 'Demo süreniz doldu!' : 'Your demo period has expired!'}</span>
           </div>
         )}
       </div>
@@ -173,12 +195,13 @@ const Sidebar = () => {
       <nav className="flex-1 p-4">
         <ul className="space-y-2">
           {navItems.map((item) => (
-            <li key={item.path}>
+            <li key={`${item.path}-${item.label}`}>
               <Link
                 to={item.path}
                 className={cn(
                   "flex items-center space-x-3 p-3 rounded-md transition-colors",
-                  location.pathname === item.path
+                  (location.pathname === item.path || 
+                   (item.path.includes('subscription') && location.search.includes('subscription')))
                     ? "bg-primary/10 text-primary font-medium"
                     : "text-gray-700 hover:bg-gray-100"
                 )}
@@ -193,7 +216,9 @@ const Sidebar = () => {
       
       <div className="p-4 border-t">
         <div className="flex items-center justify-between mb-4">
-          <Label htmlFor="demo-mode" className="text-sm font-medium">Demo Mod</Label>
+          <Label htmlFor="demo-mode" className="text-sm font-medium">
+            {language === 'tr' ? 'Demo Mod' : 'Demo Mode'}
+          </Label>
           <Switch
             id="demo-mode"
             checked={isDemoMode}
@@ -209,7 +234,7 @@ const Sidebar = () => {
             className="flex items-center justify-center w-full p-2 mb-2"
           >
             <CreditCard className="h-5 w-5 mr-2" />
-            Abonelik Planları
+            {language === 'tr' ? 'Abonelik Planları' : 'Subscription Plans'}
           </Button>
         </Link>
         
@@ -218,7 +243,7 @@ const Sidebar = () => {
             className="flex items-center justify-center w-full p-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
           >
             <Phone className="h-5 w-5 mr-2" />
-            WhatsApp'a Bağlan
+            {language === 'tr' ? 'WhatsApp\'a Bağlan' : 'Connect to WhatsApp'}
           </Button>
         </Link>
       </div>

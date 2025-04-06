@@ -1,287 +1,336 @@
 
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle,
-  DialogFooter
-} from '@/components/ui/dialog';
-import { 
-  Form, 
-  FormControl, 
-  FormField, 
-  FormItem, 
-  FormLabel, 
-  FormMessage,
-  FormDescription 
-} from '@/components/ui/form';
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Store, ShoppingBag, Scissors, Coffee, Shirt, Gift, Utensils, BookOpen, CheckCircle, Palette, BadgeAlert, Pill, Cake } from 'lucide-react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import * as z from 'zod';
-import { useToast } from '@/hooks/use-toast';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
-import { Card, CardContent } from '@/components/ui/card';
-
-// İşletme türleri - bileşen türlerini düzgün belirterek
-const businessTypes = [
-  { id: 'retail', name: 'Perakende Mağaza', icon: <Store size={20} /> },
-  { id: 'beauty', name: 'Güzellik / Kuaför', icon: <Scissors size={20} /> },
-  { id: 'cafe', name: 'Kafe / Restoran', icon: <Coffee size={20} /> },
-  { id: 'clothing', name: 'Giyim Mağazası', icon: <Shirt size={20} /> },
-  { id: 'gift', name: 'Hediyelik Eşya', icon: <Gift size={20} /> },
-  { id: 'food', name: 'Gıda Satışı', icon: <Utensils size={20} /> },
-  { id: 'education', name: 'Eğitim / Kurs', icon: <BookOpen size={20} /> },
-  { id: 'parfumery', name: 'Parfümeri / Kozmetik', icon: <Palette size={20} /> },
-  { id: 'barber', name: 'Berber', icon: <Scissors size={20} /> },
-  { id: 'pharmacy', name: 'Eczane', icon: <Pill size={20} /> },
-  { id: 'bakery', name: 'Fırın / Pastane', icon: <Cake size={20} /> },
-  { id: 'other', name: 'Diğer', icon: <ShoppingBag size={20} /> },
-];
-
-// Abonelik planları
-const subscriptionPlans = [
-  { 
-    id: 'demo', 
-    name: 'Demo (10 gün)',
-    description: 'Sınırlı özelliklerle 10 gün ücretsiz deneme',
-    price: 'Ücretsiz',
-    features: ['1 Kullanıcı Hesabı', '50 müşteri kaydı', 'Temel WhatsApp sistemleri', 'Günlük 5 Hatırlatma Mesajı', 'Web Arayüzü (Mobil uyumlu)']
-  },
-  { 
-    id: 'business', 
-    name: 'İşletme Paketi', 
-    description: 'Tam özellikli, ideal çözüm',
-    price: 'Aylık 500 ₺',
-    features: ['3 Kullanıcı hesabı', '1.000 müşteri kaydı', 'Gelişmiş WhatsApp özellikleri', 'Sınırsız hatırlatma mesajları', 'Mobil uygulama', 'Öncelikli destek (24 saat)']
-  },
-  { 
-    id: 'premium', 
-    name: 'Premium Paket', 
-    description: 'Tüm özelliklere sınırsız erişim',
-    price: 'Aylık 900 ₺',
-    features: ['5 Kullanıcı hesabı', 'Sınırsız müşteri kaydı', 'Tam WhatsApp özellikleri', 'Gelişmiş analitik ve raporlama', 'Markalı mobil uygulama', 'VIP desteği (12 saat yanıt)']
-  }
-];
-
-// Form şeması
-const formSchema = z.object({
-  businessName: z.string().min(2, {
-    message: "İşletme adı en az 2 karakter olmalıdır",
-  }),
-  businessType: z.string({
-    required_error: "Lütfen bir işletme türü seçin",
-  }),
-  whatsappNumber: z.string().min(10, {
-    message: "Geçerli bir telefon numarası girin",
-  }),
-  subscriptionPlan: z.string({
-    required_error: "Lütfen bir abonelik planı seçin",
-  }),
-});
+import { Input } from '@/components/ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const BusinessSetup = () => {
-  const [open, setOpen] = useState(true);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [currentStep, setCurrentStep] = useState('business');
+  const [language, setLanguage] = useState('tr');
   
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      businessName: "",
-      businessType: "",
-      whatsappNumber: "",
-      subscriptionPlan: "",
-    },
+  // Form states
+  const [businessInfo, setBusinessInfo] = useState({
+    name: '',
+    type: '',
+    phone: '',
+    email: '',
+    address: '',
+    logo: null as File | null,
   });
-
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Form verilerini localStorage'a kaydet
-    localStorage.setItem('businessSetup', JSON.stringify(values));
-    
-    toast({
-      title: "Kurulum tamamlandı",
-      description: "İşletme bilgileriniz kaydedildi",
-    });
-    
-    // Ana sayfaya yönlendir
-    setOpen(false);
-    navigate('/');
-  }
-
-  // Dialog kapatıldığında ana sayfaya yönlendir
-  const handleOpenChange = (open: boolean) => {
-    setOpen(open);
-    if (!open) {
-      navigate('/');
+  
+  const [ownerInfo, setOwnerInfo] = useState({
+    ownerName: '',
+    ownerPhone: '',
+    ownerEmail: '',
+  });
+  
+  const [whatsappInfo, setWhatsappInfo] = useState({
+    whatsappNumber: '',
+    autoReplies: true,
+    notificationSettings: 'all',
+  });
+  
+  // Get saved language
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem('appLanguage');
+    if (savedLanguage) {
+      setLanguage(savedLanguage);
+    }
+  }, []);
+  
+  const handleBusinessInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setBusinessInfo(prev => ({ ...prev, [name]: value }));
+  };
+  
+  const handleOwnerInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setOwnerInfo(prev => ({ ...prev, [name]: value }));
+  };
+  
+  const handleWhatsappInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setWhatsappInfo(prev => ({ ...prev, [name]: value }));
+  };
+  
+  const handleBusinessTypeChange = (value: string) => {
+    setBusinessInfo(prev => ({ ...prev, type: value }));
+  };
+  
+  const nextStep = () => {
+    if (currentStep === 'business') {
+      if (!businessInfo.name || !businessInfo.type) {
+        toast({
+          title: language === 'tr' ? "Eksik Bilgi" : "Missing Information",
+          description: language === 'tr' ? "İşletme adı ve türü zorunludur." : "Business name and type are required.",
+          variant: "destructive"
+        });
+        return;
+      }
+      setCurrentStep('owner');
+    } else if (currentStep === 'owner') {
+      if (!ownerInfo.ownerName) {
+        toast({
+          title: language === 'tr' ? "Eksik Bilgi" : "Missing Information",
+          description: language === 'tr' ? "İşletme sahibinin adı zorunludur." : "Owner name is required.",
+          variant: "destructive"
+        });
+        return;
+      }
+      setCurrentStep('whatsapp');
     }
   };
-
-  // Tür seçimi için daha güvenli işleyici
-  const handleBusinessTypeSelect = (value: string) => {
-    form.setValue('businessType', value);
+  
+  const previousStep = () => {
+    if (currentStep === 'owner') {
+      setCurrentStep('business');
+    } else if (currentStep === 'whatsapp') {
+      setCurrentStep('owner');
+    }
   };
-
+  
+  const completeSetup = () => {
+    // Combine all data and save to localStorage
+    const businessSetup = {
+      ...businessInfo,
+      ...ownerInfo,
+      ...whatsappInfo,
+      setupDate: new Date().toISOString(),
+      subscriptionPlan: 'none',
+      subscriptionStatus: 'inactive'
+    };
+    
+    localStorage.setItem('businessSetup', JSON.stringify(businessSetup));
+    
+    // Show success toast
+    toast({
+      title: language === 'tr' ? "Kurulum Tamamlandı" : "Setup Completed",
+      description: language === 'tr' ? "EsnafPanel hesabınız başarıyla kuruldu." : "Your EsnafPanel account has been successfully set up.",
+    });
+    
+    // Redirect to dashboard
+    navigate('/');
+  };
+  
+  const businessTypes = [
+    { value: "retail", label: language === 'tr' ? "Perakende Mağaza" : "Retail Store" },
+    { value: "restaurant", label: language === 'tr' ? "Restoran/Kafe" : "Restaurant/Cafe" },
+    { value: "beauty", label: language === 'tr' ? "Güzellik Salonu/Kuaför" : "Beauty Salon/Hairdresser" },
+    { value: "health", label: language === 'tr' ? "Sağlık Hizmetleri" : "Health Services" },
+    { value: "education", label: language === 'tr' ? "Eğitim/Kurs" : "Education/Training" },
+    { value: "service", label: language === 'tr' ? "Hizmet Sektörü" : "Service Sector" },
+    { value: "other", label: language === 'tr' ? "Diğer" : "Other" }
+  ];
+  
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-center pb-2">
-            <div className="flex justify-center mb-4">
-              <img src="/logo.svg" alt="EsnafPanel Logo" className="h-20" />
-            </div>
-            WhatsApp CRM Kurulumu
-          </DialogTitle>
-        </DialogHeader>
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gray-50">
+      <div className="w-full max-w-3xl">
+        <div className="mb-6 flex justify-center">
+          <img src="/logo.svg" alt="EsnafPanel" className="h-12 w-12" />
+        </div>
         
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="businessName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>İşletme Adı</FormLabel>
-                  <FormControl>
-                    <Input placeholder="İşletmenizin adını girin" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="businessType"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>İşletme Türü</FormLabel>
-                  <Select 
-                    onValueChange={field.onChange} 
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="İşletme türünüzü seçin" />
-                      </SelectTrigger>
-                    </FormControl>
+        <Card>
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl">
+              {language === 'tr' ? 'EsnafPanel Kurulumuna Hoşgeldiniz' : 'Welcome to EsnafPanel Setup'}
+            </CardTitle>
+            <CardDescription>
+              {language === 'tr' ? 'İşletmenizi yönetmeye başlamak için aşağıdaki bilgileri doldurun.' :
+              'Fill in the information below to start managing your business.'}
+            </CardDescription>
+          </CardHeader>
+          
+          <CardContent>
+            <Tabs value={currentStep} onValueChange={setCurrentStep}>
+              <TabsList className="grid w-full grid-cols-3 mb-8">
+                <TabsTrigger value="business">
+                  {language === 'tr' ? '1. İşletme Bilgileri' : '1. Business Info'}
+                </TabsTrigger>
+                <TabsTrigger value="owner">
+                  {language === 'tr' ? '2. Kullanıcı Bilgileri' : '2. Owner Info'}
+                </TabsTrigger>
+                <TabsTrigger value="whatsapp">
+                  {language === 'tr' ? '3. WhatsApp Ayarları' : '3. WhatsApp Settings'}
+                </TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="business" className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">
+                    {language === 'tr' ? 'İşletme Adı' : 'Business Name'}
+                  </Label>
+                  <Input
+                    id="name"
+                    name="name"
+                    placeholder={language === 'tr' ? "İşletmenizin adını girin" : "Enter your business name"}
+                    value={businessInfo.name}
+                    onChange={handleBusinessInfoChange}
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="type">
+                    {language === 'tr' ? 'İşletme Türü' : 'Business Type'}
+                  </Label>
+                  <Select onValueChange={handleBusinessTypeChange} value={businessInfo.type}>
+                    <SelectTrigger id="type">
+                      <SelectValue placeholder={language === 'tr' ? "İşletme türünü seçin" : "Select business type"} />
+                    </SelectTrigger>
                     <SelectContent>
                       {businessTypes.map((type) => (
-                        <SelectItem 
-                          key={type.id} 
-                          value={type.id}
-                        >
-                          <div className="flex items-center gap-2">
-                            {type.icon}
-                            <span>{type.name}</span>
-                          </div>
+                        <SelectItem key={type.value} value={type.value}>
+                          {type.label}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="whatsappNumber"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>WhatsApp Telefon Numarası</FormLabel>
-                  <FormControl>
-                    <Input 
-                      placeholder="+90 555 123 4567" 
-                      {...field} 
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <Separator className="my-4" />
-            
-            <div className="mb-4">
-              <h3 className="text-lg font-semibold mb-2">Abonelik Planı Seçin</h3>
-            </div>
-            
-            <div className="space-y-4">
-              <FormField
-                control={form.control}
-                name="subscriptionPlan"
-                render={({ field }) => (
-                  <FormItem className="space-y-3">
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        className="grid grid-cols-1 gap-4"
-                      >
-                        {subscriptionPlans.map((plan) => (
-                          <Card 
-                            key={plan.id}
-                            className={`border-2 cursor-pointer hover:bg-slate-50 ${field.value === plan.id ? 'border-primary' : 'border-gray-200'}`}
-                            onClick={() => form.setValue('subscriptionPlan', plan.id)}
-                          >
-                            <CardContent className="pt-6">
-                              <div className="flex justify-between items-start">
-                                <div>
-                                  <RadioGroupItem 
-                                    value={plan.id} 
-                                    id={plan.id} 
-                                    className="sr-only" 
-                                  />
-                                  <Label htmlFor={plan.id} className="text-xl font-bold block mb-1">{plan.name}</Label>
-                                  <p className="text-gray-500 text-sm mb-2">{plan.description}</p>
-                                  <p className="font-bold text-lg text-primary">{plan.price}</p>
-                                </div>
-                                {field.value === plan.id && (
-                                  <CheckCircle className="h-6 w-6 text-primary" />
-                                )}
-                              </div>
-                              <ul className="mt-4 space-y-2">
-                                {plan.features.map((feature, index) => (
-                                  <li key={index} className="flex items-center text-sm">
-                                    <CheckCircle className="h-4 w-4 mr-2 text-primary" />
-                                    {feature}
-                                  </li>
-                                ))}
-                              </ul>
-                            </CardContent>
-                          </Card>
-                        ))}
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            
-            <DialogFooter>
-              <Button type="submit" className="w-full bg-whatsapp hover:bg-whatsapp-dark">
-                Kurulumu Tamamla
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="phone">
+                    {language === 'tr' ? 'İşletme Telefonu' : 'Business Phone'}
+                  </Label>
+                  <Input
+                    id="phone"
+                    name="phone"
+                    placeholder={language === 'tr' ? "İşletme telefon numarası" : "Business phone number"}
+                    value={businessInfo.phone}
+                    onChange={handleBusinessInfoChange}
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="email">
+                    {language === 'tr' ? 'İşletme E-posta' : 'Business Email'}
+                  </Label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder={language === 'tr' ? "İşletme e-posta adresi" : "Business email address"}
+                    value={businessInfo.email}
+                    onChange={handleBusinessInfoChange}
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="address">
+                    {language === 'tr' ? 'İşletme Adresi' : 'Business Address'}
+                  </Label>
+                  <Input
+                    id="address"
+                    name="address"
+                    placeholder={language === 'tr' ? "İşletme adresi" : "Business address"}
+                    value={businessInfo.address}
+                    onChange={handleBusinessInfoChange}
+                  />
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="owner" className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="ownerName">
+                    {language === 'tr' ? 'Ad Soyad' : 'Full Name'}
+                  </Label>
+                  <Input
+                    id="ownerName"
+                    name="ownerName"
+                    placeholder={language === 'tr' ? "İşletme sahibinin adı soyadı" : "Business owner's full name"}
+                    value={ownerInfo.ownerName}
+                    onChange={handleOwnerInfoChange}
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="ownerPhone">
+                    {language === 'tr' ? 'Telefon' : 'Phone'}
+                  </Label>
+                  <Input
+                    id="ownerPhone"
+                    name="ownerPhone"
+                    placeholder={language === 'tr' ? "Telefon numarası" : "Phone number"}
+                    value={ownerInfo.ownerPhone}
+                    onChange={handleOwnerInfoChange}
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="ownerEmail">
+                    {language === 'tr' ? 'E-posta' : 'Email'}
+                  </Label>
+                  <Input
+                    id="ownerEmail"
+                    name="ownerEmail"
+                    type="email"
+                    placeholder={language === 'tr' ? "E-posta adresi" : "Email address"}
+                    value={ownerInfo.ownerEmail}
+                    onChange={handleOwnerInfoChange}
+                  />
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="whatsapp" className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="whatsappNumber">
+                    {language === 'tr' ? 'WhatsApp Numarası' : 'WhatsApp Number'}
+                  </Label>
+                  <Input
+                    id="whatsappNumber"
+                    name="whatsappNumber"
+                    placeholder={language === 'tr' ? "WhatsApp telefon numarası" : "WhatsApp phone number"}
+                    value={whatsappInfo.whatsappNumber}
+                    onChange={handleWhatsappInfoChange}
+                  />
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {language === 'tr' 
+                      ? "WhatsApp numaranızı ülke koduyla birlikte girin (örn. +90505XXXXXXX)" 
+                      : "Enter your WhatsApp number with country code (e.g. +90505XXXXXXX)"}
+                  </p>
+                </div>
+                
+                <div className="bg-green-50 p-4 rounded-lg border border-green-200 mb-4">
+                  <h4 className="text-sm font-medium text-green-800 mb-2">
+                    {language === 'tr' ? 'WhatsApp Bağlantısı Hakkında' : 'About WhatsApp Connection'}
+                  </h4>
+                  <p className="text-xs text-green-700">
+                    {language === 'tr' 
+                      ? "Müşterilerinizle WhatsApp üzerinden iletişim kurmak için işletmenizin WhatsApp telefonunu bağlamak gereklidir. WhatsApp'ta kullandığınız telefon numarasını girin ve kurulum tamamlandıktan sonra 'WhatsApp Bağlantısı' sayfasından devam edin."
+                      : "To communicate with your customers via WhatsApp, it is necessary to connect your business WhatsApp phone. Enter the phone number you use on WhatsApp and continue from the 'WhatsApp Connection' page after the setup is completed."}
+                  </p>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+          
+          <CardFooter className="flex justify-between">
+            {currentStep !== 'business' ? (
+              <Button variant="outline" onClick={previousStep}>
+                {language === 'tr' ? 'Geri' : 'Back'}
               </Button>
-            </DialogFooter>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
+            ) : (
+              <div></div>
+            )}
+            
+            {currentStep !== 'whatsapp' ? (
+              <Button onClick={nextStep}>
+                {language === 'tr' ? 'İlerle' : 'Next'}
+              </Button>
+            ) : (
+              <Button onClick={completeSetup}>
+                {language === 'tr' ? 'Kurulumu Tamamla' : 'Complete Setup'}
+              </Button>
+            )}
+          </CardFooter>
+        </Card>
+      </div>
+    </div>
   );
 };
 

@@ -1,7 +1,7 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { MessageSquare, Phone, User, Calendar, Settings, Menu, Globe } from 'lucide-react';
+import { MessageSquare, Phone, User, Calendar, Settings, Menu, Globe, Home } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -14,19 +14,46 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [language, setLanguage] = useState('tr');
   
+  // Load saved language on component mount
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem('appLanguage');
+    if (savedLanguage) {
+      setLanguage(savedLanguage);
+    }
+  }, []);
+
+  // Listen for language changes from other components
+  useEffect(() => {
+    const handleLanguageChange = (event: CustomEvent) => {
+      setLanguage(event.detail.language);
+    };
+    
+    window.addEventListener('languageChange', handleLanguageChange as EventListener);
+    return () => {
+      window.removeEventListener('languageChange', handleLanguageChange as EventListener);
+    };
+  }, []);
+  
   const navItems = [
-    { path: '/', icon: <User className="h-4 w-4" />, label: 'Müşteriler' },
-    { path: '/messages', icon: <MessageSquare className="h-4 w-4" />, label: 'Mesajlar' },
-    { path: '/orders', icon: <Calendar className="h-4 w-4" />, label: 'Siparişler' },
-    { path: '/whatsapp-connect', icon: <Phone className="h-4 w-4" />, label: 'WhatsApp' },
-    { path: '/settings', icon: <Settings className="h-4 w-4" />, label: 'Ayarlar' },
+    { path: '/', icon: <Home className="h-4 w-4" />, label: language === 'tr' ? 'Ana Sayfa' : 'Home' },
+    { path: '/', icon: <User className="h-4 w-4" />, label: language === 'tr' ? 'Müşteriler' : 'Customers' },
+    { path: '/messages', icon: <MessageSquare className="h-4 w-4" />, label: language === 'tr' ? 'Mesajlar' : 'Messages' },
+    { path: '/orders', icon: <Calendar className="h-4 w-4" />, label: language === 'tr' ? 'Siparişler' : 'Orders' },
+    { path: '/whatsapp-connect', icon: <Phone className="h-4 w-4" />, label: language === 'tr' ? 'WhatsApp' : 'WhatsApp' },
+    { path: '/settings?tab=subscription', icon: <Settings className="h-4 w-4" />, label: language === 'tr' ? 'Abonelik' : 'Subscription' },
+    { path: '/settings', icon: <Settings className="h-4 w-4" />, label: language === 'tr' ? 'Ayarlar' : 'Settings' },
   ];
 
   const handleLanguageChange = (value: string) => {
     setLanguage(value);
+    localStorage.setItem('appLanguage', value);
+    
+    // Dispatch custom event to notify app of language change
+    window.dispatchEvent(new CustomEvent('languageChange', { detail: { language: value } }));
+    
     toast({
-      title: "Dil değiştirildi",
-      description: "Uygulama dili güncellendi",
+      title: value === 'tr' ? "Dil değiştirildi" : "Language changed",
+      description: value === 'tr' ? "Uygulama dili güncellendi" : "Application language updated",
     });
   };
 
@@ -34,14 +61,16 @@ const Navbar = () => {
     <nav className="bg-white shadow-sm py-3 px-4 border-b">
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center space-x-2">
-          <img src="/logo.svg" alt="EsnafPanel Logo" className="w-8 h-8" />
+          <Link to="/">
+            <img src="/logo.svg" alt="EsnafPanel Logo" className="w-8 h-8" />
+          </Link>
           <h1 className="text-xl font-semibold">EsnafPanel</h1>
         </div>
         
         <div className="hidden md:flex items-center space-x-6">
           {navItems.map((item) => (
             <Link 
-              key={item.path}
+              key={item.path + item.label}
               to={item.path} 
               className={`flex items-center space-x-1 ${location.pathname === item.path ? 'text-primary font-medium' : 'text-gray-600 hover:text-primary'}`}
             >
@@ -96,7 +125,7 @@ const Navbar = () => {
               <div className="flex flex-col space-y-4 px-6">
                 {navItems.map((item) => (
                   <Link 
-                    key={item.path}
+                    key={item.path + item.label}
                     to={item.path} 
                     className={`flex items-center space-x-3 py-2 ${location.pathname === item.path ? 'text-primary font-medium' : 'text-gray-600 hover:text-primary'}`}
                     onClick={() => setIsMenuOpen(false)}
