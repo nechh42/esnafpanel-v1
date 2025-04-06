@@ -123,17 +123,22 @@ interface BusinessTypeInfoProps {
 }
 
 const BusinessTypeInfo: React.FC<BusinessTypeInfoProps> = ({ businessType }) => {
-  // Eğer işletme türü belirlenmemişse veya geçersizse "other" olarak varsay
-  const details = React.useMemo(() => {
-    // businessType'in tanımlı bir tür olup olmadığını kontrol et
-    if (!businessType || typeof businessType !== 'string' || businessType.trim() === '') {
+  // Güvenlik önlemi: businessType için güçlendirilmiş kontrol
+  const safeBusinessType = React.useMemo(() => {
+    // businessType null, undefined veya boş string ise
+    if (businessType === null || businessType === undefined || businessType === '') {
       console.log(`Geçersiz işletme türü: ${businessType}, varsayılan olarak 'other' kullanılıyor`);
-      return businessTypeDetails.other;
+      return 'other';
     }
     
-    // Eğer businessType bizim listemizdeyse o türü, değilse other'ı kullan
-    return businessTypeDetails[businessType as BusinessType] || businessTypeDetails.other;
+    // businessType bizim listemizdeyse o türü, değilse other'ı kullan
+    return businessTypeDetails[businessType] ? businessType : 'other';
   }, [businessType]);
+
+  // Detayları güvenli bir şekilde al, eğer bulunamazsa varsayılan kullan
+  const details = React.useMemo(() => {
+    return businessTypeDetails[safeBusinessType] || businessTypeDetails.other;
+  }, [safeBusinessType]);
 
   return (
     <div className="rounded-lg border p-4 shadow-sm bg-card">

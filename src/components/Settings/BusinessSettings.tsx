@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { BusinessType } from '@/components/Dashboard/BusinessTypeInfo';
+import { AlertCircle } from 'lucide-react';
 
 type BusinessSettingsProps = {
   businessData: any;
@@ -24,20 +26,47 @@ const BusinessSettings: React.FC<BusinessSettingsProps> = ({ businessData }) => 
   
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
 
+  // İşletme verilerini yükleme
   useEffect(() => {
     try {
+      setIsLoading(true);
       const savedData = localStorage.getItem('businessData');
+      
       if (savedData) {
         const parsedData = JSON.parse(savedData);
+        
+        // Eğer businessType tanımsız ya da boşsa, varsayılan değer olarak 'retail' ata
+        if (!parsedData.businessType || parsedData.businessType === '') {
+          parsedData.businessType = 'retail';
+        }
+        
         setFormData(prevData => ({
           ...prevData,
           ...parsedData
         }));
       }
+      
+      // BusinessSetup verilerini de kontrol et
+      const businessSetup = localStorage.getItem('businessSetup');
+      if (businessSetup) {
+        const parsedSetup = JSON.parse(businessSetup);
+        if (parsedSetup.businessType && parsedSetup.businessType !== '') {
+          setFormData(prevData => ({
+            ...prevData,
+            businessType: parsedSetup.businessType,
+            businessName: parsedSetup.businessName || prevData.businessName
+          }));
+        }
+      }
+      
+      setIsInitialized(true);
     } catch (error) {
       console.error("İşletme verilerini yüklerken hata:", error);
       setError("İşletme verileri yüklenemedi.");
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
@@ -47,7 +76,13 @@ const BusinessSettings: React.FC<BusinessSettingsProps> = ({ businessData }) => 
   };
 
   const handleSelectChange = (name: string, value: string) => {
-    setFormData(prev => ({ ...prev, [name]: value }));
+    try {
+      console.log(`İşletme türü değiştiriliyor: ${value}`);
+      setFormData(prev => ({ ...prev, [name]: value }));
+    } catch (error) {
+      console.error("İşletme türünü değiştirirken hata:", error);
+      setError("İşletme türü değiştirilemedi.");
+    }
   };
 
   const handleSave = () => {
@@ -55,18 +90,22 @@ const BusinessSettings: React.FC<BusinessSettingsProps> = ({ businessData }) => 
     setError(null);
     
     try {
+      // Eğer işletme türü tanımsız ya da boş ise, varsayılan değer ata
+      const businessType = formData.businessType || 'retail';
+      
       const dataToSave = {
         ...formData,
-        businessType: formData.businessType || 'other'
+        businessType
       };
       
       localStorage.setItem('businessData', JSON.stringify(dataToSave));
       
       try {
+        // BusinessSetup verilerini de güncelle
         const businessSetup = localStorage.getItem('businessSetup');
         if (businessSetup) {
           const parsedSetup = JSON.parse(businessSetup);
-          parsedSetup.businessType = dataToSave.businessType;
+          parsedSetup.businessType = businessType;
           parsedSetup.businessName = dataToSave.businessName;
           localStorage.setItem('businessSetup', JSON.stringify(parsedSetup));
         }
@@ -109,6 +148,14 @@ const BusinessSettings: React.FC<BusinessSettingsProps> = ({ businessData }) => 
     { id: 'other', name: 'Diğer' },
   ];
 
+  if (!isInitialized && isLoading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <Card>
@@ -120,8 +167,9 @@ const BusinessSettings: React.FC<BusinessSettingsProps> = ({ businessData }) => 
         </CardHeader>
         <CardContent className="space-y-6">
           {error && (
-            <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-md mb-4">
-              {error}
+            <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-md mb-4 flex items-start gap-2">
+              <AlertCircle className="h-5 w-5 mt-0.5" />
+              <span>{error}</span>
             </div>
           )}
           <div className="space-y-4">
@@ -138,8 +186,9 @@ const BusinessSettings: React.FC<BusinessSettingsProps> = ({ businessData }) => 
               <div className="space-y-2">
                 <Label htmlFor="businessType">İşletme Türü</Label>
                 <Select 
-                  value={formData.businessType || 'other'}
+                  value={formData.businessType || 'retail'}
                   onValueChange={(value) => handleSelectChange('businessType', value)}
+                  disabled={isLoading}
                 >
                   <SelectTrigger id="businessType">
                     <SelectValue placeholder="İşletme türü seçin" />
