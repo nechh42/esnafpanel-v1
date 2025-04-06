@@ -1,17 +1,21 @@
 
 import React, { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { User, MessageSquare, Calendar, Settings, Phone, CreditCard } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { User, MessageSquare, Calendar, Settings, Phone, CreditCard, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
+import { Progress } from '@/components/ui/progress';
 
 const Sidebar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [isDemoMode, setIsDemoMode] = useState(true);
+  const [demoExpiryDays, setDemoExpiryDays] = useState(10);
+  const [demoExpired, setDemoExpired] = useState(false);
   
   const navItems = [
     { path: '/', icon: <User className="h-5 w-5" />, label: 'Müşteriler' },
@@ -26,7 +30,7 @@ const Sidebar = () => {
   const businessSetup = businessSetupStr ? JSON.parse(businessSetupStr) : null;
   
   // Abonelik bilgisine göre hangi metni göstereceğiz
-  let subscriptionText = 'Demo Mod (10 Gün)';
+  let subscriptionText = `Demo Mod (${demoExpiryDays} Gün)`;
   let subscriptionClass = 'bg-yellow-100 text-yellow-800';
   
   if (businessSetup?.subscriptionPlan && !isDemoMode) {
@@ -36,9 +40,18 @@ const Sidebar = () => {
     } else if (businessSetup.subscriptionPlan === 'business') {
       subscriptionText = 'İşletme Paketi';
       subscriptionClass = 'bg-blue-100 text-blue-800';
+    } else if (businessSetup.subscriptionPlan === 'starter') {
+      subscriptionText = 'Başlangıç Paketi';
+      subscriptionClass = 'bg-blue-100 text-blue-800';
     } else {
-      subscriptionText = 'Demo (10 Gün)';
+      subscriptionText = `Demo (${demoExpiryDays} Gün)`;
     }
+  }
+  
+  // If demo has expired, update text
+  if (demoExpired && isDemoMode) {
+    subscriptionText = 'Demo Süresi Doldu';
+    subscriptionClass = 'bg-red-100 text-red-800';
   }
 
   const handleDemoModeToggle = (checked: boolean) => {
@@ -68,7 +81,60 @@ const Sidebar = () => {
     if (savedDemoMode !== null) {
       setIsDemoMode(JSON.parse(savedDemoMode));
     }
+    
+    // Calculate days remaining in demo
+    calculateDemoTimeRemaining();
+    
+    // Set interval to recalculate every day
+    const interval = setInterval(calculateDemoTimeRemaining, 1000 * 60 * 60); // Check every hour
+    
+    return () => clearInterval(interval);
   }, []);
+  
+  // Calculate remaining demo time
+  const calculateDemoTimeRemaining = () => {
+    const demoStartDate = localStorage.getItem('demoStartDate');
+    
+    if (!demoStartDate) {
+      // If no demo start date exists, set it now
+      const currentDate = new Date().toISOString();
+      localStorage.setItem('demoStartDate', currentDate);
+      setDemoExpiryDays(10);
+      setDemoExpired(false);
+      return;
+    }
+    
+    const startDate = new Date(demoStartDate);
+    const currentDate = new Date();
+    const diffDays = Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24));
+    
+    // Demo expires after 10 days
+    if (diffDays >= 10) {
+      setDemoExpiryDays(0);
+      setDemoExpired(true);
+      localStorage.setItem('demoExpired', 'true');
+    } else {
+      setDemoExpiryDays(10 - diffDays);
+      setDemoExpired(false);
+      localStorage.setItem('demoExpired', 'false');
+    }
+  };
+  
+  // Redirect to subscription page if demo expired
+  useEffect(() => {
+    if (demoExpired && isDemoMode) {
+      const hasSubscription = businessSetup?.subscriptionPlan && 
+                              businessSetup.subscriptionPlan !== 'none' &&
+                              businessSetup.subscriptionStatus === 'active';
+      
+      if (!hasSubscription && 
+          location.pathname !== '/settings' && 
+          location.pathname !== '/subscription-required' &&
+          !location.pathname.includes('subscription')) {
+        navigate('/subscription-required');
+      }
+    }
+  }, [demoExpired, isDemoMode, location.pathname, navigate]);
 
   return (
     <aside className="hidden md:flex flex-col w-64 bg-white border-r h-screen sticky top-0">
@@ -84,6 +150,23 @@ const Sidebar = () => {
             </div>
           </div>
         </div>
+        
+        {isDemoMode && !demoExpired && (
+          <div className="mt-2">
+            <div className="flex justify-between text-xs text-gray-600 mb-1">
+              <span>Demo süresi</span>
+              <span>{demoExpiryDays}/10 gün</span>
+            </div>
+            <Progress value={(demoExpiryDays / 10) * 100} className="h-1.5" />
+          </div>
+        )}
+        
+        {isDemoMode && demoExpired && (
+          <div className="mt-2 flex items-center text-red-500 text-xs">
+            <AlertTriangle className="h-3 w-3 mr-1" />
+            <span>Demo süreniz doldu!</span>
+          </div>
+        )}
       </div>
       
       <nav className="flex-1 p-4">

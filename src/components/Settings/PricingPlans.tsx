@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { useNavigate } from 'react-router-dom';
 
 type PricingPlansProps = {
   businessData?: any;
@@ -16,6 +16,7 @@ type PricingPlansProps = {
 
 const PricingPlans: React.FC<PricingPlansProps> = ({ businessData }) => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [paymentMethod, setPaymentMethod] = useState<string>("creditCard");
   const [selectedDuration, setSelectedDuration] = useState<string>("monthly");
   const [selectedPlan, setSelectedPlan] = useState<string>("");
@@ -70,10 +71,64 @@ const PricingPlans: React.FC<PricingPlansProps> = ({ businessData }) => {
   
   const closeSuccessDialog = () => {
     setShowSuccessDialog(false);
+    
+    // Update business setup in localStorage with subscription info
+    const businessSetupStr = localStorage.getItem('businessSetup');
+    if (businessSetupStr) {
+      const businessSetup = JSON.parse(businessSetupStr);
+      
+      let subscriptionPlanKey = '';
+      if (selectedPlan === 'Başlangıç') {
+        subscriptionPlanKey = 'starter';
+      } else if (selectedPlan === 'İşletme') {
+        subscriptionPlanKey = 'business';
+      } else if (selectedPlan === 'Premium') {
+        subscriptionPlanKey = 'premium';
+      }
+      
+      // Update subscription details
+      const updatedBusinessSetup = {
+        ...businessSetup,
+        subscriptionPlan: subscriptionPlanKey,
+        subscriptionStatus: 'active',
+        subscriptionStartDate: new Date().toISOString(),
+        subscriptionDuration: selectedDuration,
+        subscriptionEndDate: calculateEndDate(selectedDuration)
+      };
+      
+      // Save updated business setup
+      localStorage.setItem('businessSetup', JSON.stringify(updatedBusinessSetup));
+      
+      // Turn off demo mode
+      localStorage.setItem('demoMode', 'false');
+      
+      // Trigger storage event for other components to detect
+      window.dispatchEvent(new Event('storage'));
+    }
+    
     toast({
       title: "Ödeme Başarılı",
       description: `${selectedPlan} paketi aboneliğiniz başarıyla etkinleştirildi. Teşekkürler!`,
     });
+    
+    // Redirect to home page
+    navigate('/');
+  };
+  
+  // Calculate subscription end date based on duration
+  const calculateEndDate = (duration) => {
+    const now = new Date();
+    let endDate = new Date(now);
+    
+    if (duration === 'monthly') {
+      endDate.setMonth(now.getMonth() + 1);
+    } else if (duration === 'quarterly') {
+      endDate.setMonth(now.getMonth() + 3);
+    } else if (duration === 'biannual') {
+      endDate.setMonth(now.getMonth() + 6);
+    }
+    
+    return endDate.toISOString();
   };
 
   const getSelectedPlanPrice = () => {
