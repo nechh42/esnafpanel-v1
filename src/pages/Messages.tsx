@@ -1,195 +1,175 @@
 
 import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/Layout/MainLayout';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { MessageSquare, Phone, Send, Image, Smile, Paperclip, User, Search } from 'lucide-react';
+import ChatWindow from '@/components/Messages/ChatWindow';
 import ChatList from '@/components/Messages/ChatList';
-import ChatWindow, { Message } from '@/components/Messages/ChatWindow';
-import { useToast } from '@/components/ui/use-toast';
-import { ChatContact } from '@/components/Messages/ChatListTypes';
-
-// Sample data
-const mockContacts: ChatContact[] = [
-  {
-    id: "1",
-    name: "Ahmet Yılmaz",
-    phone: "+90 555 123 4567",
-    online: true,
-    lastMessage: "Siparişim hakkında bilgi almak istiyorum.",
-    time: "09:30"
-  },
-  {
-    id: "2",
-    name: "Ayşe Demir",
-    phone: "+90 532 987 6543",
-    lastSeen: "Bugün 14:30",
-    lastMessage: "Ürünleriniz hakkında bilgi almak istiyorum.",
-    time: "Dün 15:40"
-  },
-  {
-    id: "3",
-    name: "Mehmet Kaya",
-    phone: "+90 541 234 5678",
-    lastSeen: "Dün 18:45",
-    lastMessage: "Siparişimin durumu nedir?",
-    time: "Pazartesi 11:20"
-  }
-];
-
-const mockMessages: Record<string, Message[]> = {
-  "1": [
-    {
-      id: "m1",
-      content: "Merhaba, siparişim hakkında bilgi alabilir miyim?",
-      time: "09:30",
-      sender: "customer",
-    },
-    {
-      id: "m2",
-      content: "Tabii, hangi siparişiniz hakkında bilgi almak istiyorsunuz?",
-      time: "09:32",
-      sender: "user",
-      status: "read",
-    },
-    {
-      id: "m3",
-      content: "Geçen hafta verdiğim mobilya siparişi. Teslimat tarihi nedir?",
-      time: "09:33",
-      sender: "customer",
-    },
-    {
-      id: "m4",
-      content: "Siparişiniz hazırlanıyor. Tahmini teslimat tarihi önümüzdeki Salı günü.",
-      time: "09:35",
-      sender: "user",
-      status: "read",
-    }
-  ],
-  "2": [
-    {
-      id: "m5",
-      content: "İyi günler, ürünleriniz hakkında bilgi almak istiyorum.",
-      time: "Dün 15:40",
-      sender: "customer",
-    },
-    {
-      id: "m6",
-      content: "Merhaba, hangi ürünlerimizle ilgileniyorsunuz?",
-      time: "Dün 15:45",
-      sender: "user",
-      status: "read",
-    }
-  ],
-  "3": [
-    {
-      id: "m7",
-      content: "Siparişimin durumu nedir?",
-      time: "Pazartesi 11:20",
-      sender: "customer",
-    },
-    {
-      id: "m8",
-      content: "Siparişiniz kargoya verildi, bugün teslim edilecek.",
-      time: "Pazartesi 11:25",
-      sender: "user",
-      status: "read",
-    },
-    {
-      id: "m9",
-      content: "Teşekkür ederim.",
-      time: "Pazartesi 11:30",
-      sender: "customer",
-    }
-  ]
-};
-
-const EmptyChatState = () => (
-  <div className="h-full flex flex-col items-center justify-center p-8 text-center">
-    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-      </svg>
-    </div>
-    <h3 className="text-lg font-medium mb-2">Sohbet seçilmedi</h3>
-    <p className="text-gray-500 max-w-sm">
-      Mesajlaşmaya başlamak için soldaki listeden bir müşteri seçin veya yeni bir sohbet başlatın.
-    </p>
-  </div>
-);
+import { useToast } from '@/hooks/use-toast';
 
 const Messages = () => {
   const { toast } = useToast();
-  const [contacts, setContacts] = useState<ChatContact[]>(mockContacts);
-  const [messages, setMessages] = useState<Record<string, Message[]>>(mockMessages);
-  const [activeContactId, setActiveContactId] = useState<string | null>(null);
+  const [selectedChat, setSelectedChat] = useState<string | null>(null);
+  const [messageInput, setMessageInput] = useState('');
+  const [emptyState, setEmptyState] = useState(true);
+  const [isDemoMode, setIsDemoMode] = useState(false);
+  
+  useEffect(() => {
+    // Check if demo mode
+    const demoMode = localStorage.getItem('demoMode');
+    if (demoMode) {
+      setIsDemoMode(JSON.parse(demoMode));
+    }
+    
+    // Check if chat data exists
+    const chatData = localStorage.getItem('chatData');
+    if (chatData) {
+      const parsedData = JSON.parse(chatData);
+      if (parsedData && parsedData.length > 0) {
+        setEmptyState(false);
+      }
+    }
+  }, []);
 
-  const handleSelectContact = (contactId: string) => {
-    setActiveContactId(contactId);
-  };
-
-  const handleSendMessage = (contactId: string, content: string) => {
-    // Create a new message
-    const newMessage: Message = {
-      id: `m${Date.now()}`,
-      content,
-      time: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
-      sender: 'user',
-      status: 'sent',
-    };
-
-    // Update messages state
-    setMessages(prevMessages => ({
-      ...prevMessages,
-      [contactId]: [...(prevMessages[contactId] || []), newMessage],
-    }));
-
-    // Simulate response after a delay
-    setTimeout(() => {
-      const autoReply: Message = {
-        id: `m${Date.now() + 1}`,
-        content: "Bu otomatik bir yanıttır. Mesajınız alındı. En kısa sürede size dönüş yapacağız.",
-        time: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
-        sender: 'customer',
-      };
-
-      setMessages(prevMessages => ({
-        ...prevMessages,
-        [contactId]: [...(prevMessages[contactId] || []), autoReply],
-      }));
-
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!messageInput.trim()) {
+      return;
+    }
+    
+    if (!selectedChat) {
       toast({
-        title: "Yeni Mesaj",
-        description: "Müşteriden yeni bir mesaj alındı.",
+        title: "Hata",
+        description: "Lütfen önce bir sohbet seçin.",
+        variant: "destructive",
       });
-    }, 3000);
+      return;
+    }
+    
+    if (isDemoMode) {
+      toast({
+        title: "Demo Modu",
+        description: "Demo modunda mesaj gönderme özelliği sınırlıdır. Lütfen bir abonelik planı seçin.",
+      });
+      return;
+    }
+    
+    // In a real app, here we would send the message via API
+    // For now, we'll just clear the input
+    setMessageInput('');
+    
+    toast({
+      title: "Mesaj Gönderildi",
+      description: "Mesajınız başarıyla gönderildi.",
+    });
   };
-
-  const selectedContact = activeContactId ? contacts.find(c => c.id === activeContactId) : null;
-  const selectedMessages = activeContactId ? messages[activeContactId] || [] : [];
 
   return (
     <MainLayout>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold">Mesajlar</h1>
-        <p className="text-gray-600">WhatsApp mesajlarınızı yönetin.</p>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-[calc(100vh-12rem)]">
-        <div className="md:col-span-1">
-          <ChatList
-            contacts={contacts}
-            activeContactId={activeContactId || ''}
-            onSelectContact={handleSelectContact}
-          />
+      <div className="h-full flex flex-col md:flex-row">
+        {/* Sidebar/Chat List */}
+        <div className="w-full md:w-80 border-r flex-shrink-0 h-full overflow-hidden">
+          <div className="p-4 border-b">
+            <div className="relative">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Müşteri veya mesaj ara..."
+                className="pl-9"
+              />
+            </div>
+          </div>
+          
+          <Tabs defaultValue="whatsapp" className="h-[calc(100%-73px)]">
+            <div className="border-b px-4">
+              <TabsList className="grid grid-cols-2">
+                <TabsTrigger value="whatsapp" className="flex items-center">
+                  <Phone className="h-4 w-4 mr-2" />
+                  <span>WhatsApp</span>
+                </TabsTrigger>
+                <TabsTrigger value="chat" className="flex items-center">
+                  <MessageSquare className="h-4 w-4 mr-2" />
+                  <span>Mesajlar</span>
+                </TabsTrigger>
+              </TabsList>
+            </div>
+
+            <TabsContent value="whatsapp" className="h-full overflow-auto m-0">
+              {emptyState ? (
+                <div className="h-full flex flex-col items-center justify-center p-4 text-center">
+                  <div className="bg-muted h-24 w-24 rounded-full flex items-center justify-center mb-4">
+                    <Phone className="h-10 w-10 text-muted-foreground" />
+                  </div>
+                  <h3 className="font-medium mb-1">WhatsApp Mesajları</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    WhatsApp Business API ile bağlanarak müşterilerinizle sohbet edin.
+                  </p>
+                  <Button>WhatsApp'ı Bağla</Button>
+                </div>
+              ) : (
+                <ChatList onChatSelect={setSelectedChat} selectedChat={selectedChat} />
+              )}
+            </TabsContent>
+            
+            <TabsContent value="chat" className="h-full overflow-auto m-0">
+              <div className="h-full flex flex-col items-center justify-center p-4 text-center">
+                <div className="bg-muted h-24 w-24 rounded-full flex items-center justify-center mb-4">
+                  <MessageSquare className="h-10 w-10 text-muted-foreground" />
+                </div>
+                <h3 className="font-medium mb-1">Web Sohbet Mesajları</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Web siteniz üzerinden gelen sohbet mesajları burada görüntülenecek.
+                </p>
+                <Button variant="outline">Web Sohbeti Etkinleştir</Button>
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
         
-        <div className="md:col-span-2">
-          {selectedContact ? (
-            <ChatWindow 
-              contact={selectedContact} 
-              messages={selectedMessages}
-              onSendMessage={handleSendMessage}
-            />
+        {/* Chat window */}
+        <div className="flex-1 flex flex-col h-full overflow-hidden">
+          {selectedChat ? (
+            <>
+              <ChatWindow chatId={selectedChat} />
+              
+              <div className="border-t p-4">
+                <form onSubmit={handleSendMessage} className="flex items-center space-x-2">
+                  <Button type="button" variant="ghost" size="icon" className="flex-shrink-0">
+                    <Smile className="h-5 w-5" />
+                  </Button>
+                  <Button type="button" variant="ghost" size="icon" className="flex-shrink-0">
+                    <Paperclip className="h-5 w-5" />
+                  </Button>
+                  <Button type="button" variant="ghost" size="icon" className="flex-shrink-0">
+                    <Image className="h-5 w-5" />
+                  </Button>
+                  
+                  <Input
+                    value={messageInput}
+                    onChange={(e) => setMessageInput(e.target.value)}
+                    placeholder="Mesajınızı yazın..."
+                    className="flex-1"
+                  />
+                  
+                  <Button type="submit" size="icon" className="flex-shrink-0">
+                    <Send className="h-5 w-5" />
+                  </Button>
+                </form>
+              </div>
+            </>
           ) : (
-            <EmptyChatState />
+            <div className="h-full flex flex-col items-center justify-center p-4 text-center">
+              <div className="bg-muted h-24 w-24 rounded-full flex items-center justify-center mb-4">
+                <User className="h-10 w-10 text-muted-foreground" />
+              </div>
+              <h3 className="font-medium mb-1">Mesaj Görüntüleyici</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Görüntülemek için sol taraftan bir sohbet seçin veya yeni bir görüşme başlatın.
+              </p>
+              <Button>Yeni Mesaj</Button>
+            </div>
           )}
         </div>
       </div>

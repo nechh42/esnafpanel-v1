@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Index from "./pages/Index";
 import BusinessSetup from "./pages/BusinessSetup";
@@ -22,6 +22,27 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+// Wrapper component to handle page transitions
+const PageTransition = ({ children }) => {
+  const location = useLocation();
+  const [isAnimating, setIsAnimating] = useState(false);
+  
+  useEffect(() => {
+    setIsAnimating(true);
+    const timer = setTimeout(() => {
+      setIsAnimating(false);
+    }, 300);
+    
+    return () => clearTimeout(timer);
+  }, [location.pathname]);
+  
+  return (
+    <div className={`page-transition ${isAnimating ? 'page-transition-active' : ''}`}>
+      {children}
+    </div>
+  );
+};
 
 const App = () => {
   const [isSetupComplete, setIsSetupComplete] = useState(false);
@@ -55,6 +76,19 @@ const App = () => {
 
     // Check subscription status
     checkSubscriptionStatus();
+    
+    // Add styles for page transitions
+    const style = document.createElement('style');
+    style.textContent = `
+      .page-transition {
+        opacity: 1;
+        transition: opacity 0.3s ease-in-out;
+      }
+      .page-transition-active {
+        opacity: 0;
+      }
+    `;
+    document.head.appendChild(style);
   }, []);
   
   // Listen for demo mode changes
@@ -158,16 +192,16 @@ const App = () => {
               element={
                 shouldRedirectToSubscription(window.location.pathname) 
                   ? <Navigate to="/subscription-required" replace /> 
-                  : <Index />
+                  : <PageTransition><Index /></PageTransition>
               } 
             />
-            <Route path="/setup" element={<BusinessSetup />} />
+            <Route path="/setup" element={<PageTransition><BusinessSetup /></PageTransition>} />
             <Route 
               path="/messages" 
               element={
                 shouldRedirectToSubscription(window.location.pathname) 
                   ? <Navigate to="/subscription-required" replace /> 
-                  : <Messages />
+                  : <PageTransition><Messages /></PageTransition>
               } 
             />
             <Route 
@@ -175,7 +209,7 @@ const App = () => {
               element={
                 shouldRedirectToSubscription(window.location.pathname) 
                   ? <Navigate to="/subscription-required" replace /> 
-                  : <Orders />
+                  : <PageTransition><Orders /></PageTransition>
               } 
             />
             <Route 
@@ -183,12 +217,12 @@ const App = () => {
               element={
                 shouldRedirectToSubscription(window.location.pathname) 
                   ? <Navigate to="/subscription-required" replace /> 
-                  : <WhatsAppConnect />
+                  : <PageTransition><WhatsAppConnect /></PageTransition>
               } 
             />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/subscription-required" element={<SubscriptionRequired />} />
-            <Route path="*" element={<NotFound />} />
+            <Route path="/settings" element={<PageTransition><Settings /></PageTransition>} />
+            <Route path="/subscription-required" element={<PageTransition><SubscriptionRequired /></PageTransition>} />
+            <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
           </Routes>
         </TooltipProvider>
       </QueryClientProvider>

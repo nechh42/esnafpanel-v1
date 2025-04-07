@@ -134,14 +134,14 @@ const PricingPlans: React.FC<PricingPlansProps> = ({ businessData }) => {
 
   const getSelectedPlanPrice = () => {
     if (selectedPlan === "Başlangıç") {
-      return selectedDuration === "monthly" ? "250 ₺" : 
-             selectedDuration === "quarterly" ? "750 ₺" : "1.500 ₺";
+      return selectedDuration === "monthly" ? "115 ₺" : 
+             selectedDuration === "quarterly" ? "345 ₺" : "690 ₺";
     } else if (selectedPlan === "İşletme") {
-      return selectedDuration === "monthly" ? "500 ₺" : 
-             selectedDuration === "quarterly" ? "1.500 ₺" : "3.000 ₺";
+      return selectedDuration === "monthly" ? "295 ₺" : 
+             selectedDuration === "quarterly" ? "885 ₺" : "1.770 ₺";
     } else {
-      return selectedDuration === "monthly" ? "900 ₺" : 
-             selectedDuration === "quarterly" ? "2.700 ₺" : "5.400 ₺";
+      return selectedDuration === "monthly" ? "585 ₺" : 
+             selectedDuration === "quarterly" ? "1.755 ₺" : "3.510 ₺";
     }
   };
 
@@ -201,9 +201,9 @@ const PricingPlans: React.FC<PricingPlansProps> = ({ businessData }) => {
           <CardContent>
             <div className="mb-4">
               <div className="text-2xl font-bold">
-                {selectedDuration === "monthly" && "250 ₺/ay"}
-                {selectedDuration === "quarterly" && "750 ₺"}
-                {selectedDuration === "biannual" && "1.500 ₺"}
+                {selectedDuration === "monthly" && "115 ₺/ay"}
+                {selectedDuration === "quarterly" && "345 ₺"}
+                {selectedDuration === "biannual" && "690 ₺"}
               </div>
               <div className="text-sm text-muted-foreground">
                 {selectedDuration === "quarterly" && "3 aylık ödeme"}
@@ -263,9 +263,9 @@ const PricingPlans: React.FC<PricingPlansProps> = ({ businessData }) => {
           <CardContent>
             <div className="mb-4">
               <div className="text-2xl font-bold">
-                {selectedDuration === "monthly" && "500 ₺/ay"}
-                {selectedDuration === "quarterly" && "1.500 ₺"}
-                {selectedDuration === "biannual" && "3.000 ₺"}
+                {selectedDuration === "monthly" && "295 ₺/ay"}
+                {selectedDuration === "quarterly" && "885 ₺"}
+                {selectedDuration === "biannual" && "1.770 ₺"}
               </div>
               <div className="text-sm text-muted-foreground">
                 {selectedDuration === "quarterly" && "3 aylık ödeme"}
@@ -322,9 +322,9 @@ const PricingPlans: React.FC<PricingPlansProps> = ({ businessData }) => {
           <CardContent>
             <div className="mb-4">
               <div className="text-2xl font-bold">
-                {selectedDuration === "monthly" && "900 ₺/ay"}
-                {selectedDuration === "quarterly" && "2.700 ₺"}
-                {selectedDuration === "biannual" && "5.400 ₺"}
+                {selectedDuration === "monthly" && "585 ₺/ay"}
+                {selectedDuration === "quarterly" && "1.755 ₺"}
+                {selectedDuration === "biannual" && "3.510 ₺"}
               </div>
               <div className="text-sm text-muted-foreground">
                 {selectedDuration === "quarterly" && "3 aylık ödeme"}
@@ -397,7 +397,7 @@ const PricingPlans: React.FC<PricingPlansProps> = ({ businessData }) => {
           <div>
             <h4 className="font-medium mb-2">Geliştirici Bilgileri</h4>
             <ul className="space-y-1 text-sm">
-              <li><strong>Geliştirici:</strong> Bireysel Yazılım Geliştiricisi</li>
+              <li><strong>Geliştirici:</strong> NECHH</li>
               <li><strong>E-posta:</strong> esnafpanel@gmail.com</li>
               <li><strong>Telefon:</strong> +90 555 123 4567</li>
               <li><strong>Web:</strong> www.esnafpanel.com</li>
