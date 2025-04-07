@@ -8,6 +8,8 @@ import { MessageSquare, Phone, Send, Image, Smile, Paperclip, User, Search } fro
 import ChatWindow from '@/components/Messages/ChatWindow';
 import ChatList from '@/components/Messages/ChatList';
 import { useToast } from '@/hooks/use-toast';
+import { ChatContact } from '@/components/Messages/ChatListTypes';
+import { Message } from '@/components/Messages/ChatWindow';
 
 const Messages = () => {
   const { toast } = useToast();
@@ -15,6 +17,8 @@ const Messages = () => {
   const [messageInput, setMessageInput] = useState('');
   const [emptyState, setEmptyState] = useState(true);
   const [isDemoMode, setIsDemoMode] = useState(false);
+  const [contacts, setContacts] = useState<ChatContact[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   
   useEffect(() => {
     // Check if demo mode
@@ -29,7 +33,13 @@ const Messages = () => {
       const parsedData = JSON.parse(chatData);
       if (parsedData && parsedData.length > 0) {
         setEmptyState(false);
+        setContacts(parsedData);
       }
+    } else {
+      // Create empty chat data
+      setEmptyState(true);
+      setContacts([]);
+      localStorage.setItem('chatData', JSON.stringify([]));
     }
   }, []);
 
@@ -67,6 +77,17 @@ const Messages = () => {
     });
   };
 
+  const getSelectedContact = () => {
+    if (!selectedChat) return null;
+    return contacts.find(contact => contact.id === selectedChat);
+  };
+
+  const handleSelectContact = (contactId: string) => {
+    setSelectedChat(contactId);
+    // In a real app, here we would fetch messages for this contact
+    setMessages([]);
+  };
+  
   return (
     <MainLayout>
       <div className="h-full flex flex-col md:flex-row">
@@ -109,7 +130,11 @@ const Messages = () => {
                   <Button>WhatsApp'ı Bağla</Button>
                 </div>
               ) : (
-                <ChatList onChatSelect={setSelectedChat} selectedChat={selectedChat} />
+                <ChatList 
+                  contacts={contacts} 
+                  activeContactId={selectedChat || undefined} 
+                  onSelectContact={handleSelectContact} 
+                />
               )}
             </TabsContent>
             
@@ -130,9 +155,16 @@ const Messages = () => {
         
         {/* Chat window */}
         <div className="flex-1 flex flex-col h-full overflow-hidden">
-          {selectedChat ? (
+          {selectedChat && getSelectedContact() ? (
             <>
-              <ChatWindow chatId={selectedChat} />
+              <ChatWindow 
+                contact={getSelectedContact() as ChatContact} 
+                messages={messages} 
+                onSendMessage={(contactId, message) => {
+                  // Handle sending messages
+                  console.log(`Sending message to ${contactId}: ${message}`);
+                }}
+              />
               
               <div className="border-t p-4">
                 <form onSubmit={handleSendMessage} className="flex items-center space-x-2">
