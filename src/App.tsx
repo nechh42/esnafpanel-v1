@@ -107,19 +107,6 @@ const App = () => {
     };
   }, []);
 
-  // Mobile back button handling
-  useEffect(() => {
-    const handleBackButton = () => {
-      console.log("Back button pressed");
-    };
-
-    document.addEventListener('backbutton', handleBackButton);
-    
-    return () => {
-      document.removeEventListener('backbutton', handleBackButton);
-    };
-  }, []);
-
   // Check if demo has expired
   const checkDemoExpiration = () => {
     const demoStartDate = localStorage.getItem('demoStartDate');

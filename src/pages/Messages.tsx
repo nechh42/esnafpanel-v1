@@ -34,6 +34,9 @@ const Messages = () => {
       if (parsedData && parsedData.length > 0) {
         setEmptyState(false);
         setContacts(parsedData);
+      } else {
+        setEmptyState(true);
+        setContacts([]);
       }
     } else {
       // Create empty chat data

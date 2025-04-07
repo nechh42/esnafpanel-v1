@@ -4,8 +4,6 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { User, MessageSquare, Calendar, Settings, Phone, CreditCard, AlertTriangle, Home } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Progress } from '@/components/ui/progress';
 
@@ -73,27 +71,6 @@ const Sidebar = () => {
     subscriptionText = language === 'tr' ? 'Demo Süresi Doldu' : 'Demo Expired';
     subscriptionClass = 'bg-red-100 text-red-800';
   }
-
-  const handleDemoModeToggle = (checked: boolean) => {
-    setIsDemoMode(checked);
-    
-    if (checked) {
-      toast({
-        title: language === 'tr' ? "Demo Mod Aktif" : "Demo Mode Active",
-        description: language === 'tr' ? "Şu anda demo modunda çalışıyorsunuz. Tüm veriler geçicidir ve kaydedilmez." : "You are currently working in demo mode. All data is temporary and will not be saved.",
-      });
-    } else {
-      toast({
-        title: language === 'tr' ? "Demo Mod Kapalı" : "Demo Mode Off",
-        description: language === 'tr' ? "Gerçek mod aktif. Verileriniz kaydedilecek ve gerçek müşterilerle çalışabilirsiniz." : "Real mode active. Your data will be saved and you can work with real customers.",
-      });
-    }
-  };
-
-  // Save demo mode state to localStorage
-  useEffect(() => {
-    localStorage.setItem('demoMode', JSON.stringify(isDemoMode));
-  }, [isDemoMode]);
 
   // Load demo mode state from localStorage
   useEffect(() => {
@@ -213,19 +190,6 @@ const Sidebar = () => {
           ))}
         </ul>
       </nav>
-      
-      <div className="p-4 border-t">
-        <div className="flex items-center justify-between mb-4">
-          <Label htmlFor="demo-mode" className="text-sm font-medium">
-            {language === 'tr' ? 'Demo Mod' : 'Demo Mode'}
-          </Label>
-          <Switch
-            id="demo-mode"
-            checked={isDemoMode}
-            onCheckedChange={handleDemoModeToggle}
-          />
-        </div>
-      </div>
       
       <div className="p-4 border-t mt-auto">
         <Link to="/settings?tab=subscription">

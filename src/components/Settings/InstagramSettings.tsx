@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -168,8 +169,6 @@ const InstagramSettings: React.FC<InstagramSettingsProps> = ({ businessData }) =
                 ? "Instagram hesabınız bağlı. Aşağıdaki ayarları yapılandırabilirsiniz." 
                 : "Bu ayarları yapılandırmak için Instagram hesabınızı bağlamanız gerekiyor."}
             </p>
-            
-            {/* Add more settings options here if needed */}
           </div>
         </CardContent>
       </Card>
